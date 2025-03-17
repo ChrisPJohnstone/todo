@@ -47,7 +47,6 @@ class Update(Command):
             fields["message"] = " ".join(args.message)
         if args.due:
             fields["due"] = DateUtil.format(DateUtil.parse(args.due))
-            print(fields["due"])
         if args.completed:
             completed_at: str = DateUtil.format(datetime.now())
             fields["completed"] = True
