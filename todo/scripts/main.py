@@ -2,13 +2,23 @@
 from argparse import _SubParsersAction, ArgumentParser, Namespace
 import logging
 
-from todo.commands import Command, Complete, Count, Create, List, Query, Update
+from todo.commands import (
+    Command,
+    Complete,
+    Count,
+    Create,
+    Delete,
+    List,
+    Query,
+    Update,
+)
 
 COMMANDS: dict[str, type[Command]] = {
     "add": Create,
     "complete": Complete,
     "count": Count,
-    "list": List,
+    "rm": Delete,
+    "ls": List,
     "query": Query,
     "update": Update,
 }

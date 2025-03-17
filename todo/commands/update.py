@@ -16,7 +16,7 @@ class Update(Command):
         parser.add_argument(
             type=str,
             dest="id",
-            help="The todo item to complete",
+            help="The todo item to update",
             nargs=1,
         )
         parser.add_argument(

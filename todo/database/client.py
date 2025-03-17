@@ -53,6 +53,14 @@ class Client:
         SET {{fields}}
         WHERE "id" = {{id}}
         """
+
+    @property
+    def DELETE_QUERY(self) -> str:
+        return f"""
+        DELETE FROM "{self.TABLE_NAME}"
+        WHERE "id" = {{id}}
+        """
+
     def _execute(
         self,
         connection: Connection,
@@ -104,3 +112,6 @@ class Client:
             id=id,
         )
         self.execute(query, fields)
+
+    def delete(self, id: int) -> None:
+        self.execute(self.DELETE_QUERY.format(id=id))
