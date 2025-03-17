@@ -31,8 +31,10 @@ class DateUtil:
         return DateUtil.today() + timedelta(days=1)
 
     @staticmethod
-    def parse(date: str) -> datetime:
+    def parse(date: str) -> datetime | None:
         clean_date: str = date.lower()
+        if clean_date in ["never", "none", "na", "n/a"]:
+            return None
         if clean_date in ["now", "today"]:
             return DateUtil.today()
         if clean_date == "tomorrow":
@@ -51,5 +53,7 @@ class DateUtil:
         raise ValueError(f"Invalid due date: {date}")
 
     @staticmethod
-    def format(date: datetime) -> str:
-        return date.strftime("%Y-%m-%d %H:%M:%S")
+    def format(date: datetime | None) -> str | None:
+        if date:
+            return date.strftime("%Y-%m-%d %H:%M:%S")
+        return None

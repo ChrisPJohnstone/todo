@@ -42,15 +42,14 @@ class Update(Command):
 
     @staticmethod
     def run(args: Namespace) -> None:
-        fields: dict[str, str | bool] = {}
+        fields: dict[str, str | bool | None] = {}
         if args.message:
             fields["message"] = " ".join(args.message)
         if args.due:
             fields["due"] = DateUtil.format(DateUtil.parse(args.due))
         if args.completed:
-            completed_at: str = DateUtil.format(datetime.now())
             fields["completed"] = True
-            fields["completed_at"] = completed_at
+            fields["completed_at"] = DateUtil.format(datetime.now())
         if not fields:
             raise ValueError("No fields to update")
         client: Client = Client()
