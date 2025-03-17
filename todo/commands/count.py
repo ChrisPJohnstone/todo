@@ -5,10 +5,10 @@ from todo.database import Client
 from todo.utils import QueryUtil
 
 
-class List(Command):
+class Count(Command):
     @property
     def HELP(self) -> str:
-        return "List all todo items"
+        return "Count todo items"
 
     @staticmethod
     def _add_args(parser: ArgumentParser) -> None:
@@ -28,5 +28,5 @@ class List(Command):
     @staticmethod
     def run(args: Namespace) -> None:
         client: Client = Client()
-        for item in client.get_list(QueryUtil.parse_criteria(args)):
-            print(item)
+        count: int = client.get_count(QueryUtil.parse_criteria(args))
+        print(count)

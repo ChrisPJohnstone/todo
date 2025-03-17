@@ -35,6 +35,10 @@ class Client:
         return f'SELECT * FROM "{self.TABLE_NAME}"'
 
     @property
+    def COUNT_QUERY(self) -> str:
+        return f'SELECT COUNT(*) FROM "{self.TABLE_NAME}"'
+
+    @property
     def INSERT_QUERY(self) -> str:
         return f"""
         INSERT INTO "{self.TABLE_NAME}" ("message", "due")
@@ -59,12 +63,13 @@ class Client:
     def create_table(self) -> None:
         self._execute(self.DDL)
 
-    def list(self, criteria: str = "") -> list[tuple]:
+    def get_list(self, criteria: str = "") -> list[tuple]:
         return self._execute(f"{self.LIST_QUERY} {criteria}")
 
+    def get_count(self, criteria: str = "") -> int:
+        return self._execute(f"{self.COUNT_QUERY} {criteria}")[0][0]
+
     def add(self, message: str, due: str | None = None) -> int:
-        self._execute("DROP TABLE todo")
-        self.create_table()
         params: dict[str, Any] = {"message": message, "due": due}
         return self._execute(self.INSERT_QUERY, params)[0][0]
 

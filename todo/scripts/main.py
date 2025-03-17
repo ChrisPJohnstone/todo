@@ -2,11 +2,12 @@
 from argparse import _SubParsersAction, ArgumentParser, Namespace
 import logging
 
-from todo.commands import Command, Complete, Create, List, Update
+from todo.commands import Command, Complete, Count, Create, List, Update
 
 COMMANDS: dict[str, type[Command]] = {
     "add": Create,
     "complete": Complete,
+    "count": Count,
     "list": List,
     "update": Update,
 }
