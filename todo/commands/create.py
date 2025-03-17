@@ -23,7 +23,7 @@ class Create(Command):
             metavar="due",
             type=str,
             required=False,
-            default=None,
+            default="now",
             help="When the item is due",
         )
 
