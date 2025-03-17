@@ -88,3 +88,6 @@ class Client:
             id=id,
         )
         self._execute(query, fields)
+
+    def query(self, query: str) -> list[tuple]:
+        return self._execute(query)
