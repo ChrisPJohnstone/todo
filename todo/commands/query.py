@@ -1,4 +1,4 @@
-from argparse import ArgumentParser, BooleanOptionalAction, Namespace
+from argparse import ArgumentParser, Namespace
 
 from tabulate import tabulate
 
@@ -19,20 +19,11 @@ class Query(Command):
             help="Query to send",
             nargs="*",
         )
-        parser.add_argument(
-            "--show-output",
-            action=BooleanOptionalAction,
-            default=True,
-            help="Show the output of the query",
-        )
 
     @staticmethod
     def run(args: Namespace) -> None:
         query: str = " ".join(args.query)
         client: Client = Client()
-        results: list[tuple] = client.execute(
-            query=query,
-            include_headers=args.show_output,
-        )
-        if args.show_output:
+        results: list[tuple] = client.execute(query)
+        if len(results) >= 0:
             print(tabulate(results[1:], headers=results[0]))

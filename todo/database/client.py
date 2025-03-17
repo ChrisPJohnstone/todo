@@ -66,15 +66,14 @@ class Client:
         connection: Connection,
         query: str,
         params: dict[str, Any] | Sequence[Any] | None = None,
-        include_headers: bool = False
     ) -> list[tuple]:
         cursor: Cursor = connection.cursor()
         cursor.execute(query, params or {})
         output: list[tuple] = cursor.fetchall()
-        if include_headers:
+        if cursor.description:
             output.insert(
                 0,
-                tuple(description[0] for description in cursor.description),
+                tuple(description[0] for description in cursor.description)
             )
         cursor.close()
         connection.commit()
@@ -84,25 +83,24 @@ class Client:
         self,
         query: str,
         params: dict[str, Any] | Sequence[Any] | None = None,
-        include_headers: bool = False
     ) -> list[tuple]:
         logging.debug(f"Executing {query} with {params}")
         with connect(self.DATABASE) as connection:
-            return self._execute(connection, query, params, include_headers)
+            return self._execute(connection, query, params)
 
     def create_table(self) -> None:
         self.execute(self.DDL)
 
     def get_list(self, criteria: str = "") -> list[tuple]:
         query: str = f"{self.LIST_QUERY} {criteria}"
-        return self.execute(query, include_headers=True)
+        return self.execute(query)
 
     def get_count(self, criteria: str = "") -> int:
-        return self.execute(f"{self.COUNT_QUERY} {criteria}")[0][0]
+        return self.execute(f"{self.COUNT_QUERY} {criteria}")[1][0]
 
     def add(self, message: str, due: str | None = None) -> int:
         params: dict[str, Any] = {"message": message, "due": due}
-        return self.execute(self.INSERT_QUERY, params)[0][0]
+        return self.execute(self.INSERT_QUERY, params)[1][0]
 
     def update(self, id: int, fields: dict[str, Any]) -> None:
         if not fields:
