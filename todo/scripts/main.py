@@ -2,26 +2,7 @@
 from argparse import _SubParsersAction, ArgumentParser, Namespace
 import logging
 
-from todo.commands import (
-    Command,
-    Complete,
-    Count,
-    Create,
-    Delete,
-    List,
-    Query,
-    Update,
-)
-
-COMMANDS: dict[str, type[Command]] = {
-    "add": Create,
-    "complete": Complete,
-    "count": Count,
-    "rm": Delete,
-    "ls": List,
-    "query": Query,
-    "update": Update,
-}
+from todo.commands import COMMAND_DICT
 
 
 def setup_logging(verbose: bool) -> None:
@@ -38,11 +19,11 @@ def main() -> None:
         dest="command",
         required=True,
     )
-    for name, command in COMMANDS.items():
+    for name, command in COMMAND_DICT.items():
         command(name, subparsers)
     args: Namespace = parser.parse_args()
     setup_logging(args.verbose)
-    COMMANDS[args.command].run(args)
+    COMMAND_DICT[args.command].run(args)
 
 
 if __name__ == "__main__":

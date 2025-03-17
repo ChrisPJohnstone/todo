@@ -1,4 +1,4 @@
-from argparse import ArgumentParser, Namespace
+from argparse import ArgumentParser, BooleanOptionalAction, Namespace
 
 from tabulate import tabulate
 
@@ -22,7 +22,7 @@ class List(Command):
         )
         parser.add_argument(
             "--include-completed",
-            action="store_true",
+            action=BooleanOptionalAction,
             default=False,
             help="Include completed items in the list",
         )

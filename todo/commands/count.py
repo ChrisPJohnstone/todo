@@ -1,4 +1,4 @@
-from argparse import ArgumentParser, Namespace
+from argparse import ArgumentParser, BooleanOptionalAction, Namespace
 
 from .base import Command
 from todo.database import Client
@@ -20,7 +20,7 @@ class Count(Command):
         )
         parser.add_argument(
             "--include-completed",
-            action="store_true",
+            action=BooleanOptionalAction,
             default=False,
             help="Include completed items in the list",
         )
