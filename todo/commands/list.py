@@ -1,5 +1,7 @@
 from argparse import ArgumentParser, Namespace
 
+from tabulate import tabulate
+
 from .base import Command
 from todo.database import Client
 from todo.utils import QueryUtil
@@ -28,5 +30,5 @@ class List(Command):
     @staticmethod
     def run(args: Namespace) -> None:
         client: Client = Client()
-        for item in client.get_list(QueryUtil.parse_criteria(args)):
-            print(item)
+        results: list[tuple] = client.get_list(QueryUtil.parse_criteria(args))
+        print(tabulate(results[1:], headers=results[0]))

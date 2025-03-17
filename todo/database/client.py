@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 from pathlib import Path
-from sqlite3 import Cursor, connect
+from sqlite3 import Connection, Cursor, connect
 from typing import Any
 import logging
 
@@ -36,7 +36,7 @@ class Client:
 
     @property
     def COUNT_QUERY(self) -> str:
-        return f'SELECT COUNT(*) FROM "{self.TABLE_NAME}"'
+        return f'SELECT COUNT(*) AS "count" FROM "{self.TABLE_NAME}"'
 
     @property
     def INSERT_QUERY(self) -> str:
@@ -55,30 +55,46 @@ class Client:
         """
     def _execute(
         self,
+        connection: Connection,
         query: str,
         params: dict[str, Any] | Sequence[Any] | None = None,
+        include_headers: bool = False
+    ) -> list[tuple]:
+        cursor: Cursor = connection.cursor()
+        cursor.execute(query, params or {})
+        output: list[tuple] = cursor.fetchall()
+        if include_headers:
+            output.insert(
+                0,
+                tuple(description[0] for description in cursor.description),
+            )
+        cursor.close()
+        connection.commit()
+        return output
+
+    def execute(
+        self,
+        query: str,
+        params: dict[str, Any] | Sequence[Any] | None = None,
+        include_headers: bool = False
     ) -> list[tuple]:
         logging.debug(f"Executing {query} with {params}")
         with connect(self.DATABASE) as connection:
-            cursor: Cursor = connection.cursor()
-            cursor.execute(query, params or {})
-            output: list[tuple] = cursor.fetchall()
-            cursor.close()
-            connection.commit()
-        return output
+            return self._execute(connection, query, params, include_headers)
 
     def create_table(self) -> None:
-        self._execute(self.DDL)
+        self.execute(self.DDL)
 
     def get_list(self, criteria: str = "") -> list[tuple]:
-        return self._execute(f"{self.LIST_QUERY} {criteria}")
+        query: str = f"{self.LIST_QUERY} {criteria}"
+        return self.execute(query, include_headers=True)
 
     def get_count(self, criteria: str = "") -> int:
-        return self._execute(f"{self.COUNT_QUERY} {criteria}")[0][0]
+        return self.execute(f"{self.COUNT_QUERY} {criteria}")[0][0]
 
     def add(self, message: str, due: str | None = None) -> int:
         params: dict[str, Any] = {"message": message, "due": due}
-        return self._execute(self.INSERT_QUERY, params)[0][0]
+        return self.execute(self.INSERT_QUERY, params)[0][0]
 
     def update(self, id: int, fields: dict[str, Any]) -> None:
         if not fields:
@@ -87,7 +103,4 @@ class Client:
             fields=", ".join(f'"{field}" = :{field}' for field in fields),
             id=id,
         )
-        self._execute(query, fields)
-
-    def query(self, query: str) -> list[tuple]:
-        return self._execute(query)
+        self.execute(query, fields)
