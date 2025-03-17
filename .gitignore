@@ -1,2 +1,6 @@
+# Build Files
 build
 *\.egg-info
+
+# Databases
+*.db

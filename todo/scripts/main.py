@@ -1,11 +1,20 @@
 #!/usr/bin/env python3
 from argparse import _SubParsersAction, ArgumentParser, Namespace
+import logging
 
-from src.commands import Add, Command
+from todo.commands import Command, Complete, Create, List, Update
 
 COMMANDS: dict[str, type[Command]] = {
-    Add.COMMAND: Add,
+    "add": Create,
+    "complete": Complete,
+    "list": List,
+    "update": Update,
 }
+
+
+def setup_logging(verbose: bool) -> None:
+    level: int = logging.DEBUG if verbose else logging.INFO
+    logging.basicConfig(level=level)
 
 
 def main() -> None:
@@ -17,9 +26,10 @@ def main() -> None:
         dest="command",
         required=True,
     )
-    for command in COMMANDS.values():
-        command.add_parser(subparsers)
+    for name, command in COMMANDS.items():
+        command(name, subparsers)
     args: Namespace = parser.parse_args()
+    setup_logging(args.verbose)
     COMMANDS[args.command].run(args)
 
 
