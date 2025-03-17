@@ -16,7 +16,7 @@ class Create(Command):
             type=str,
             dest="message",
             help="The todo item to add",
-            nargs="*",
+            nargs="+",
         )
         parser.add_argument(
             "--due",

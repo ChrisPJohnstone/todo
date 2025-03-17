@@ -17,7 +17,7 @@ class Query(Command):
             type=str,
             dest="query",
             help="Query to send",
-            nargs="*",
+            nargs="+",
         )
 
     @staticmethod

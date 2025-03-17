@@ -23,7 +23,7 @@ class Update(Command):
             "--message",
             metavar="message",
             type=str,
-            nargs="*",
+            nargs="+",
             required=False,
             help="New message for the todo item",
         )
