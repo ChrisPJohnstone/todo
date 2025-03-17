@@ -30,5 +30,9 @@ class List(Command):
     @staticmethod
     def run(args: Namespace) -> None:
         client: Client = Client()
-        results: list[tuple] = client.get_list(QueryUtil.parse_criteria(args))
+        criteria: str = QueryUtil.parse_criteria(
+            criteria=args.criteria,
+            include_completed=args.include_completed,
+        )
+        results: list[tuple] = client.get_list(criteria)
         print(tabulate(results[1:], headers=results[0]))

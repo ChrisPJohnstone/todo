@@ -1,17 +1,12 @@
-from argparse import Namespace
-
-
 class QueryUtil:
     @staticmethod
-    def parse_criteria(args: Namespace) -> str:
-        if args.include_completed:
-            output: str = "WHERE completed"
-        else:
-            output: str = "WHERE not completed"
-        if not args.criteria:
-            return output
-        if args.criteria[0].lower() == "where":
-            args.criteria.pop(0)
-        if not args.criteria:
-            return output
-        return f"{output} AND {' '.join(args.criteria)}"
+    def parse_criteria(criteria: list[str], include_completed: bool) -> str:
+        constructor: list[str] = []
+        if not include_completed:
+            constructor.append("not completed")
+        if criteria:
+            if criteria[0].lower() == "where":
+                criteria.pop(0)
+            constructor.append(" ".join(criteria))
+        output: str = " AND ".join(constructor)
+        return f"WHERE {output}" if output else ""

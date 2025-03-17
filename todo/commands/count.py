@@ -28,5 +28,9 @@ class Count(Command):
     @staticmethod
     def run(args: Namespace) -> None:
         client: Client = Client()
-        count: int = client.get_count(QueryUtil.parse_criteria(args))
+        criteria: str = QueryUtil.parse_criteria(
+            criteria=args.criteria,
+            include_completed=args.include_completed,
+        )
+        count: int = client.get_count(criteria)
         print(count)
