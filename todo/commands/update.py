@@ -23,6 +23,7 @@ class Update(Command):
             "--message",
             metavar="message",
             type=str,
+            nargs="*",
             required=False,
             help="New message for the todo item",
         )
@@ -43,7 +44,7 @@ class Update(Command):
     def run(args: Namespace) -> None:
         fields: dict[str, str | bool] = {}
         if args.message:
-            fields["message"] = args.message
+            fields["message"] = " ".join(args.message)
         if args.due:
             fields["due"] = DateUtil.format(DateUtil.parse(args.due))
             print(fields["due"])
