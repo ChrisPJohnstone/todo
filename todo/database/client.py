@@ -46,6 +46,13 @@ class Client:
         RETURNING "id"
         """
 
+    @property
+    def UPDATE_QUERY(self) -> str:
+        return f"""
+        UPDATE "{self.TABLE_NAME}"
+        SET {{fields}}
+        WHERE "id" = {{id}}
+        """
     def _execute(
         self,
         query: str,
@@ -74,9 +81,10 @@ class Client:
         return self._execute(self.INSERT_QUERY, params)[0][0]
 
     def update(self, id: int, fields: dict[str, Any]) -> None:
-        query: str = f"""
-        UPDATE "{self.TABLE_NAME}"
-        SET {", ".join(f"{key} = :{key}" for key in fields)}
-        WHERE "id" = {id}
-        """
+        if not fields:
+            raise ValueError("No fields to update")
+        query: str = self.UPDATE_QUERY.format(
+            fields=", ".join(f'"{field}" = :{field}' for field in fields),
+            id=id,
+        )
         self._execute(query, fields)
