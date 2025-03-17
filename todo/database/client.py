@@ -73,7 +73,7 @@ class Client:
         if cursor.description:
             output.insert(
                 0,
-                tuple(description[0] for description in cursor.description)
+                tuple(description[0] for description in cursor.description),
             )
         cursor.close()
         connection.commit()
