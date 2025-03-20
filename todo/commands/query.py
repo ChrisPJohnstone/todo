@@ -3,7 +3,7 @@ from argparse import ArgumentParser, Namespace
 from tabulate import tabulate
 
 from .base import Command
-from todo.database import Client
+from todo.services import DatabaseService
 
 
 class Query(Command):
@@ -23,7 +23,7 @@ class Query(Command):
     @staticmethod
     def run(args: Namespace) -> None:
         query: str = " ".join(args.query)
-        client: Client = Client()
-        results: list[tuple] = client.execute(query)
+        database: DatabaseService = DatabaseService()
+        results: list[tuple] = database.execute(query)
         if len(results) >= 0:
             print(tabulate(results[1:], headers=results[0]))

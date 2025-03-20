@@ -1,7 +1,7 @@
 from argparse import ArgumentParser, Namespace
 
 from .base import Command
-from todo.database import Client
+from todo.services import DatabaseService
 from todo.utils import DateUtil
 
 
@@ -29,8 +29,8 @@ class Create(Command):
 
     @staticmethod
     def run(args: Namespace) -> None:
-        client: Client = Client()
-        item_id: int = client.add(
+        database: DatabaseService = DatabaseService()
+        item_id: int = database.add(
             message=" ".join(args.message),
             due=DateUtil.format(DateUtil.parse(args.due)) if args.due else None,
         )

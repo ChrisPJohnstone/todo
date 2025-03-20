@@ -1,7 +1,7 @@
 from notifypy import Notify
 
 
-class Notifier:
+class NotificationService:
     def __init__(
         self,
         title: str = "",

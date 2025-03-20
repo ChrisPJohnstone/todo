@@ -3,7 +3,7 @@ from argparse import ArgumentParser, BooleanOptionalAction, Namespace
 from tabulate import tabulate
 
 from .base import Command
-from todo.database import Client
+from todo.services import DatabaseService
 from todo.utils import QueryUtil
 
 
@@ -29,10 +29,10 @@ class List(Command):
 
     @staticmethod
     def run(args: Namespace) -> None:
-        client: Client = Client()
+        database: DatabaseService = DatabaseService()
         criteria: str = QueryUtil.parse_criteria(
             criteria=args.criteria,
             include_completed=args.include_completed,
         )
-        results: list[tuple] = client.get_list(criteria)
+        results: list[tuple] = database.get_list(criteria)
         print(tabulate(results[1:], headers=results[0]))

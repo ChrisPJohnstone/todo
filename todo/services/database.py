@@ -5,7 +5,7 @@ from typing import Any
 import logging
 
 
-class Client:
+class DatabaseService:
     def __init__(self) -> None:
         self.create_table()
 

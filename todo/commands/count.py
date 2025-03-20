@@ -1,7 +1,7 @@
 from argparse import ArgumentParser, BooleanOptionalAction, Namespace
 
 from .base import Command
-from todo.database import Client
+from todo.services import DatabaseService
 from todo.utils import QueryUtil
 
 
@@ -27,10 +27,10 @@ class Count(Command):
 
     @staticmethod
     def run(args: Namespace) -> None:
-        client: Client = Client()
+        database: DatabaseService = DatabaseService()
         criteria: str = QueryUtil.parse_criteria(
             criteria=args.criteria,
             include_completed=args.include_completed,
         )
-        count: int = client.get_count(criteria)
+        count: int = database.get_count(criteria)
         print(count)

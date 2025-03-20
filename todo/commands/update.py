@@ -2,7 +2,7 @@ from argparse import ArgumentParser, Namespace
 from datetime import datetime
 
 from .base import Command
-from todo.database import Client
+from todo.services import DatabaseService
 from todo.utils import DateUtil
 
 
@@ -52,5 +52,5 @@ class Update(Command):
             fields["completed_at"] = DateUtil.format(datetime.now())
         if not fields:
             raise ValueError("No fields to update")
-        client: Client = Client()
-        client.update(args.id[0], fields)
+        database: DatabaseService = DatabaseService()
+        database.update(args.id[0], fields)

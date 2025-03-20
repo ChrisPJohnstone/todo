@@ -1,7 +1,7 @@
 from argparse import ArgumentParser, Namespace
 
 from .base import Command
-from todo.database import Client
+from todo.services import DatabaseService
 
 
 class Delete(Command):
@@ -20,5 +20,5 @@ class Delete(Command):
 
     @staticmethod
     def run(args: Namespace) -> None:
-        client: Client = Client()
-        client.delete(args.id[0])
+        database: DatabaseService = DatabaseService()
+        database.delete(args.id[0])

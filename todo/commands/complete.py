@@ -2,7 +2,7 @@ from argparse import ArgumentParser, Namespace
 from datetime import datetime
 
 from .base import Command
-from todo.database import Client
+from todo.services import DatabaseService
 
 
 class Complete(Command):
@@ -22,8 +22,8 @@ class Complete(Command):
     @staticmethod
     def run(args: Namespace) -> None:
         now: str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        client: Client = Client()
-        client.update(
+        database: DatabaseService = DatabaseService()
+        database.update(
             id=args.id[0],
             fields={"completed": True, "completed_at": now},
         )
