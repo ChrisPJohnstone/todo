@@ -11,7 +11,7 @@ class Client:
 
     @property
     def DATABASE(self) -> Path:
-        return Path(__file__).parent / "todo.db"
+        return Path.home() / ".todo.db"
 
     @property
     def TABLE_NAME(self) -> str:
