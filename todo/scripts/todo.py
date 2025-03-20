@@ -10,7 +10,7 @@ def setup_logging(verbose: bool) -> None:
     logging.basicConfig(level=level)
 
 
-def main() -> None:
+def todo() -> None:
     parser: ArgumentParser = ArgumentParser(
         prog="Todo List Manager",
         description="A simple todo list manager",
@@ -27,4 +27,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    todo()

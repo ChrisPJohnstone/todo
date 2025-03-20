@@ -14,7 +14,8 @@ dynamic = ["dependencies"]
   email = "chrispjohnstone97@gmail.com"
 
   [project.scripts]
-  todo = "todo:main"
+  todo = "todo.scripts:todo"
+  send-notification = "todo.scripts:notify"
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
