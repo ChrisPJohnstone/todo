@@ -27,6 +27,7 @@ class ScheduleService:
         return f"{when.minute} {when.hour} {when.day} {when.month} *"
 
     def schedule(self, command: str, when: datetime) -> None:
+        self.unschedule(command)
         logging.debug(f"Scheduling {command} for {when} for {self.user}")
         with CronTab(user=self.user) as cron:
             job: CronItem = cron.new(command=command)
