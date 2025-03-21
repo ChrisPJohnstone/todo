@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from argparse import _SubParsersAction, ArgumentParser, Namespace
 from datetime import datetime
+from os import getenv
 
 from todo.services import ScheduleService
 
@@ -31,13 +32,21 @@ class Command(ABC):
         pass
 
     @staticmethod
+    def notification_command(item_id: int) -> str:
+        return (
+            f"export PATH={getenv('PATH')} ; "
+            f"send-notification `td show {item_id}`"
+        )
+        # TODO: Figure out a better way to manage path
+
+    @staticmethod
     def schedule_notification(item_id: int, due: datetime) -> None:
-        command: str = f"send-notification `td show {item_id}`"
+        command: str = Command.notification_command(item_id)
         ScheduleService().schedule(command=command, when=due)
 
     @staticmethod
     def unschedule_notification(item_id: int) -> None:
-        command: str = f"send-notification `td show {item_id}`"
+        command: str = Command.notification_command(item_id)
         ScheduleService().unschedule(command=command)
 
     @staticmethod
