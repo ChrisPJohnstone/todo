@@ -33,8 +33,8 @@ class DateUtil:
     @staticmethod
     def parse(date: str) -> datetime | None:
         clean_date: str = date.lower()
-        if clean_date in ["never", "none", "na", "n/a"]:
-            return None
+        if clean_date in ["later"]:
+            return datetime.now() + timedelta(hours=1)
         if clean_date in ["now", "today"]:
             return DateUtil.today()
         if clean_date == "tomorrow":
@@ -50,6 +50,8 @@ class DateUtil:
                 return datetime.strptime(date, pattern)
             except ValueError:
                 pass
+        if clean_date in ["never", "none", "na", "n/a"]:
+            return None
         raise ValueError(f"Invalid due date: {date}")
 
     @staticmethod
