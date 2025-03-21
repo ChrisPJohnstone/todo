@@ -33,15 +33,15 @@ class Command(ABC):
 
     @staticmethod
     def notification_command(item_id: int) -> str:
-        return (
-            f"export PATH={getenv('PATH')} ; "
-            f"send-notification `td show {item_id}`"
-        )
-        # TODO: Figure out a better way to manage path
+        return f"send-notification `td show {item_id}`"
 
     @staticmethod
     def schedule_notification(item_id: int, due: datetime) -> None:
-        command: str = Command.notification_command(item_id)
+        command: str = (
+            f"export PATH={getenv('PATH')} ; "
+            f"{Command.notification_command(item_id)}"
+        )
+        # TODO: Figure out a better way to manage path
         ScheduleService().schedule(command=command, when=due)
 
     @staticmethod

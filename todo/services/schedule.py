@@ -36,4 +36,5 @@ class ScheduleService:
     def unschedule(self, command: str) -> None:
         logging.debug(f"Unscheduling {command} for {self.user}")
         with CronTab(user=self.user) as cron:
-            cron.remove_all(command=command)
+            for job in cron.find_command(command):
+                cron.remove(job)
