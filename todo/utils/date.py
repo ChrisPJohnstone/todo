@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import re
 
 
 class DateUtil:
@@ -31,6 +32,21 @@ class DateUtil:
         return DateUtil.today() + timedelta(days=1)
 
     @staticmethod
+    def offset(offset: str) -> timedelta:
+        parts: list[str] = offset.split(" ")
+        period: int = int(parts[0])
+        unit: str = parts[1]
+        if re.match(r"weeks?", unit):
+            return timedelta(weeks=period)
+        if re.match(r"days?", unit):
+            return timedelta(days=period)
+        if re.match(r"hours?", unit):
+            return timedelta(hours=period)
+        if re.match(r"minutes?", unit):
+            return timedelta(minutes=period)
+        raise ValueError(f"Invalid offset: {offset}")
+
+    @staticmethod
     def parse(date: str) -> datetime | None:
         clean_date: str = date.lower()
         if clean_date in ["later"]:
@@ -39,6 +55,8 @@ class DateUtil:
             return DateUtil.today()
         if clean_date == "tomorrow":
             return DateUtil.tomorrow()
+        if re.match(r"\d* [a-z]*", clean_date):
+            return datetime.now() + DateUtil.offset(clean_date)
         if clean_date in DateUtil.DAYS:
             weekday_index: int = DateUtil.DAYS.index(clean_date)
             delta: int = weekday_index - DateUtil.today().weekday()
