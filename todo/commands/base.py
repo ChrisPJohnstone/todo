@@ -1,5 +1,8 @@
 from abc import ABC, abstractmethod
 from argparse import _SubParsersAction, ArgumentParser, Namespace
+from datetime import datetime
+
+from todo.services import ScheduleService
 
 
 class Command(ABC):
@@ -26,6 +29,16 @@ class Command(ABC):
     @abstractmethod
     def _add_args(parser: ArgumentParser) -> None:  # pragma: no cover
         pass
+
+    @staticmethod
+    def schedule_notification(item_id: int, due: datetime) -> None:
+        command: str = f"send-notification `td show {item_id}`"
+        ScheduleService().schedule(command=command, when=due)
+
+    @staticmethod
+    def unschedule_notification(item_id: int) -> None:
+        command: str = f"send-notification `td show {item_id}`"
+        ScheduleService().unschedule(command=command)
 
     @staticmethod
     @abstractmethod

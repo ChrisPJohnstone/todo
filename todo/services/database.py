@@ -52,6 +52,7 @@ class DatabaseService:
         UPDATE "{self.TABLE_NAME}"
         SET {{fields}}
         WHERE "id" = {{id}}
+        RETURNING "id"
         """
 
     @property
@@ -98,7 +99,7 @@ class DatabaseService:
     def get_count(self, criteria: str = "") -> int:
         return self.execute(f"{self.COUNT_QUERY} {criteria}")[1][0]
 
-    def add(self, message: str, due: str | None = None) -> int:
+    def create(self, message: str, due: str | None = None) -> int:
         params: dict[str, Any] = {"message": message, "due": due}
         return self.execute(self.INSERT_QUERY, params)[1][0]
 
@@ -109,7 +110,7 @@ class DatabaseService:
             fields=", ".join(f'"{field}" = :{field}' for field in fields),
             id=id,
         )
-        self.execute(query, fields)
+        return self.execute(query, fields)[1][0]
 
     def delete(self, id: int) -> None:
         self.execute(self.DELETE_QUERY.format(id=id))
