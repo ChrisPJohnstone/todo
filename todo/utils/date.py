@@ -47,30 +47,30 @@ class DateUtil:
         raise ValueError(f"Invalid offset: {offset}")
 
     @staticmethod
-    def parse(date: str) -> datetime | None:
-        clean_date: str = date.lower()
-        if clean_date in ["later"]:
+    def parse(date_string: str) -> datetime | None:
+        clean_string: str = date_string.lower()
+        if clean_string in ["later"]:
             return datetime.now() + timedelta(hours=1)
-        if clean_date in ["now", "today"]:
+        if clean_string in ["now", "today"]:
             return DateUtil.today()
-        if clean_date == "tomorrow":
+        if clean_string == "tomorrow":
             return DateUtil.tomorrow()
-        if re.match(r"\d* [a-z]*", clean_date):
-            return datetime.now() + DateUtil.offset(clean_date)
-        if clean_date in DateUtil.DAYS:
-            weekday_index: int = DateUtil.DAYS.index(clean_date)
+        if re.match(r"\d* [a-z]*", clean_string):
+            return datetime.now() + DateUtil.offset(clean_string)
+        if clean_string in DateUtil.DAYS:
+            weekday_index: int = DateUtil.DAYS.index(clean_string)
             delta: int = weekday_index - DateUtil.today().weekday()
             if delta <= 0:
                 delta += 7
             return DateUtil.today() + timedelta(days=delta)
         for pattern in DateUtil.DATE_PATTERNS:
             try:
-                return datetime.strptime(date, pattern)
+                return datetime.strptime(clean_string, pattern)
             except ValueError:
                 pass
-        if clean_date in ["never", "none", "na", "n/a"]:
+        if clean_string in ["never", "none", "na", "n/a"]:
             return None
-        raise ValueError(f"Invalid due date: {date}")
+        raise ValueError(f"Invalid due date: {date_string}")
 
     @staticmethod
     def format(date: datetime | None) -> str | None:

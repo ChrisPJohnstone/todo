@@ -1,65 +1,175 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from unittest.mock import MagicMock, patch
 
-from pytest import mark
-
+from test_utils import parametrize, TestSet
 from todo.utils import DateUtil
 
 FILEPATH: str = "todo.utils.date"
 
 
-parse_args: list[str] = ["now_return", "date", "expected"]
-parse_tests: list[tuple[datetime, str, datetime | None]] = [
-    (datetime(2025, 1, 1), "later", datetime(2025, 1, 1, 1)),
-    (datetime(2025, 1, 1), "now", datetime(2025, 1, 1)),
-    (datetime(2025, 1, 1), "today", datetime(2025, 1, 1)),
-    (datetime(2025, 1, 1), "tomorrow", datetime(2025, 1, 2)),
-    (datetime(2025, 1, 1), "1 minute", datetime(2025, 1, 1, minute=1)),
-    (datetime(2025, 1, 1), "85 minutes", datetime(2025, 1, 1, 1, 25)),
-    (datetime(2025, 1, 1), "1 hour", datetime(2025, 1, 1, 1)),
-    (datetime(2025, 1, 1), "25 hours", datetime(2025, 1, 2, 1)),
-    (datetime(2025, 1, 1), "1 day", datetime(2025, 1, 2)),
-    (datetime(2025, 1, 1), "367 days", datetime(2026, 1, 3)),
-    (datetime(2025, 1, 1), "1 week", datetime(2025, 1, 8)),
-    (datetime(2025, 1, 1), "3 weeks", datetime(2025, 1, 22)),
-    (datetime(2025, 1, 1), "monday", datetime(2025, 1, 6)),
-    (datetime(2025, 1, 1), "tuesday", datetime(2025, 1, 7)),
-    (datetime(2025, 1, 1), "wednesday", datetime(2025, 1, 8)),
-    (datetime(2025, 1, 1), "thursday", datetime(2025, 1, 2)),
-    (datetime(2025, 1, 1), "friday", datetime(2025, 1, 3)),
-    (datetime(2025, 1, 1), "saturday", datetime(2025, 1, 4)),
-    (datetime(2025, 1, 1), "sunday", datetime(2025, 1, 5)),
-    (
-        datetime(2025, 1, 1),
-        "2000-02-03 11:22:33",
-        datetime(2000, 2, 3, 11, 22, 33),
-    ),
-    (datetime(2025, 1, 1), "2000-02-03 11:22", datetime(2000, 2, 3, 11, 22)),
-    (datetime(2025, 1, 1), "2000-02-03 11", datetime(2000, 2, 3, 11)),
-    (datetime(2025, 1, 1), "2000-02-03", datetime(2000, 2, 3)),
-    (
-        datetime(2025, 1, 1),
-        "05/06/2001 11:22:33",
-        datetime(2001, 6, 5, 11, 22, 33),
-    ),
-    (datetime(2025, 1, 1), "05/06/2001 11:22", datetime(2001, 6, 5, 11, 22)),
-    (datetime(2025, 1, 1), "05/06/2001 11", datetime(2001, 6, 5, 11)),
-    (datetime(2025, 1, 1), "05/06/2001", datetime(2001, 6, 5)),
-    (datetime(2025, 1, 1), "never", None),
-    (datetime(2025, 1, 1), "none", None),
-    (datetime(2025, 1, 1), "na", None),
-    (datetime(2025, 1, 1), "n/a", None),
-]
+parse_tests: TestSet = {
+    "later": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "later",
+        "expected": datetime(2025, 1, 1, 1),
+    },
+    "now": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "now",
+        "expected": datetime(2025, 1, 1),
+    },
+    "today": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "today",
+        "expected": datetime(2025, 1, 1),
+    },
+    "tomorrow": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "tomorrow",
+        "expected": datetime(2025, 1, 2),
+    },
+    "1 minute": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "1 minute",
+        "expected": datetime(2025, 1, 1, minute=1),
+    },
+    "85 minutes": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "85 minutes",
+        "expected": datetime(2025, 1, 1, 1, 25),
+    },
+    "1 hour": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "1 hour",
+        "expected": datetime(2025, 1, 1, 1),
+    },
+    "25 hours": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "25 hours",
+        "expected": datetime(2025, 1, 2, 1),
+    },
+    "1 day": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "1 day",
+        "expected": datetime(2025, 1, 2),
+    },
+    "367 days": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "367 days",
+        "expected": datetime(2026, 1, 3),
+    },
+    "1 week": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "1 week",
+        "expected": datetime(2025, 1, 8),
+    },
+    "3 weeks": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "3 weeks",
+        "expected": datetime(2025, 1, 22),
+    },
+    "monday": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "monday",
+        "expected": datetime(2025, 1, 6),
+    },
+    "tuesday": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "tuesday",
+        "expected": datetime(2025, 1, 7),
+    },
+    "wednesday": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "wednesday",
+        "expected": datetime(2025, 1, 8),
+    },
+    "thursday": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "thursday",
+        "expected": datetime(2025, 1, 2),
+    },
+    "friday": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "friday",
+        "expected": datetime(2025, 1, 3),
+    },
+    "saturday": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "saturday",
+        "expected": datetime(2025, 1, 4),
+    },
+    "sunday": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "sunday",
+        "expected": datetime(2025, 1, 5),
+    },
+    "2000-02-03 11:22:33": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "2000-02-03 11:22:33",
+        "expected": datetime(2000, 2, 3, 11, 22, 33),
+    },
+    "2000-02-03 11:22": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "2000-02-03 11:22",
+        "expected": datetime(2000, 2, 3, 11, 22),
+    },
+    "2000-02-03 11": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "2000-02-03 11",
+        "expected": datetime(2000, 2, 3, 11),
+    },
+    "2000-02-03": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "2000-02-03",
+        "expected": datetime(2000, 2, 3),
+    },
+    "05/06/2001 11:22:33": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "05/06/2001 11:22:33",
+        "expected": datetime(2001, 6, 5, 11, 22, 33),
+    },
+    "05/06/2001 11:22": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "05/06/2001 11:22",
+        "expected": datetime(2001, 6, 5, 11, 22),
+    },
+    "05/06/2001 11": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "05/06/2001 11",
+        "expected": datetime(2001, 6, 5, 11),
+    },
+    "05/06/2001": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "05/06/2001",
+        "expected": datetime(2001, 6, 5),
+    },
+    "never": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "never",
+        "expected": None,
+    },
+    "none": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "none",
+        "expected": None,
+    },
+    "na": {"now": datetime(2025, 1, 1), "date_string": "na", "expected": None},
+    "n/a": {
+        "now": datetime(2025, 1, 1),
+        "date_string": "n/a",
+        "expected": None,
+    },
+}
 
 
 @patch(f"{FILEPATH}.datetime")
-@mark.parametrize(parse_args, parse_tests)
+@parametrize(parse_tests)
 def test_parse(
     mock_datetime: MagicMock,
-    now_return: datetime,
-    date: str,
+    now: datetime,
+    date_string: str,
     expected: datetime | None,
 ) -> datetime | None:
-    mock_datetime.now.return_value = now_return
+    mock_datetime.now.return_value = now
     mock_datetime.strptime.side_effect = datetime.strptime
-    assert DateUtil.parse(date) == expected
+    assert DateUtil.parse(date_string) == expected
