@@ -1,4 +1,6 @@
-# Build Files
+# Python Files
+__pycache__/
+*.py[cod]
 build
 *\.egg-info
 
