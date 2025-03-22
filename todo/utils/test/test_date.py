@@ -1,5 +1,8 @@
 from datetime import datetime
+from typing import Any
 from unittest.mock import MagicMock, patch
+
+from pytest import raises
 
 from test_utils import parametrize, TestSet
 from todo.utils import DateUtil
@@ -173,6 +176,41 @@ def test_parse(
     mock_datetime.now.return_value = now
     mock_datetime.strptime.side_effect = datetime.strptime
     assert DateUtil.parse(date_string) == expected
+
+
+parse_fail_tests: TestSet = {
+    "1 month": {
+        "date_string": "1 month",
+        "exception": ValueError,
+        "expected": "Invalid offset: 1 month",
+    },
+    "1 year": {
+        "date_string": "1 year",
+        "exception": ValueError,
+        "expected": "Invalid offset: 1 year",
+    },
+    "33 seconds": {
+        "date_string": "33 seconds",
+        "exception": ValueError,
+        "expected": "Invalid offset: 33 seconds",
+    },
+    "next week": {
+        "date_string": "next week",
+        "exception": ValueError,
+        "expected": "Invalid due date: next week",
+    },
+    "test": {
+        "date_string": "test",
+        "exception": ValueError,
+        "expected": "Invalid due date: test",
+    },
+}
+
+
+@parametrize(parse_fail_tests)
+def test_parse_fail(date_string: str, exception: Any, expected: str) -> None:
+    with raises(exception, match=expected):
+        DateUtil.parse(date_string)
 
 
 format_tests: TestSet = {

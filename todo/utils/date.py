@@ -55,7 +55,7 @@ class DateUtil:
             return DateUtil.today()
         if clean_string == "tomorrow":
             return DateUtil.tomorrow()
-        if re.match(r"\d* [a-z]*", clean_string):
+        if re.match(r"\d+ [a-z]+", clean_string):
             return datetime.now() + DateUtil.offset(clean_string)
         if clean_string in DateUtil.DAYS:
             weekday_index: int = DateUtil.DAYS.index(clean_string)

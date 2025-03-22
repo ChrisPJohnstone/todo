@@ -6,3 +6,6 @@ build
 
 # Databases
 *.db
+
+# Testing
+*coverage*
