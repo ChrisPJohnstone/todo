@@ -173,3 +173,25 @@ def test_parse(
     mock_datetime.now.return_value = now
     mock_datetime.strptime.side_effect = datetime.strptime
     assert DateUtil.parse(date_string) == expected
+
+
+format_tests: TestSet = {
+    "2000-02-03 11:22:33": {
+        "date": datetime(2000, 2, 3, 11, 22, 33),
+        "expected": "2000-02-03 11:22:33",
+    },
+    "2025-12-31 23:59:59": {
+        "date": datetime(2025, 12, 31, 23, 59, 59),
+        "expected": "2025-12-31 23:59:59",
+    },
+    "None": {"date": None, "expected": None},
+    "Incomplete": {
+        "date": datetime(2025, 1, 1),
+        "expected": "2025-01-01 00:00:00",
+    },
+}
+
+
+@parametrize(format_tests)
+def test_format(date: datetime | None, expected: str) -> None:
+    assert DateUtil.format(date) == expected
