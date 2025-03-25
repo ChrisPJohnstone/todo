@@ -3,25 +3,35 @@ from todo.utils import QueryUtil
 
 
 parse_criteria_tests: TestSet = {
-    "overdue": {
-        "criteria": ["where", "due", "<", "CURRENT_TSTAMP"],
+    "simple": {
+        "criteria": ["priority", "=", "1"],
         "include_completed": False,
-        "expected": "WHERE not completed AND due < CURRENT_TSTAMP",
+        "expected": "WHERE not completed AND priority = 1",
     },
-    "overdue with completed": {
-        "criteria": ["due", "<", "CURRENT_TSTAMP"],
+    "with_where": {
+        "criteria": ["where", "priority", "=", "1"],
+        "include_completed": False,
+        "expected": "WHERE not completed AND priority = 1",
+    },
+    "include_completed": {
+        "criteria": ["priority", "=", "1"],
         "include_completed": True,
-        "expected": "WHERE due < CURRENT_TSTAMP",
+        "expected": "WHERE priority = 1",
     },
-    "all": {
+    "no_criteria": {
         "criteria": [],
-        "include_completed": True,
-        "expected": "",
+        "include_completed": False,
+        "expected": "WHERE not completed",
     },
-    "completed": {
-        "criteria": ["completed"],
+    "complex": {
+        "criteria": ["priority", "=", "1", "AND", "category", "=", "work"],
+        "include_completed": False,
+        "expected": "WHERE not completed AND priority = 1 AND category = work",
+    },
+    "complex_with_completed": {
+        "criteria": ["priority", "=", "1", "AND", "category", "=", "work"],
         "include_completed": True,
-        "expected": "WHERE completed",
+        "expected": "WHERE priority = 1 AND category = work",
     },
 }
 
