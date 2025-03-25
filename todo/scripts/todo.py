@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from argparse import _SubParsersAction, ArgumentParser, Namespace
+from sys import argv
 import logging
 
 from todo.commands import COMMAND_DICT
@@ -10,7 +11,12 @@ def setup_logging(verbose: bool) -> None:
     logging.basicConfig(level=level)
 
 
-def todo() -> None:
+def _run(args: Namespace) -> None:  # pragma: no cover
+    COMMAND_DICT[args.command].run(args)
+    # TODO: Seperate parsers from commands
+
+
+def todo(arg_input: list[str]) -> None:
     parser: ArgumentParser = ArgumentParser(
         prog="Todo List Manager",
         description="A simple todo list manager",
@@ -21,10 +27,10 @@ def todo() -> None:
     )
     for name, command in COMMAND_DICT.items():
         command(name, subparsers)
-    args: Namespace = parser.parse_args()
+    args: Namespace = parser.parse_args(arg_input)
     setup_logging(args.verbose)
-    COMMAND_DICT[args.command].run(args)
+    _run(args)
 
 
-if __name__ == "__main__":
-    todo()
+if __name__ == "__main__":  # pragma: no cover
+    todo(argv)
