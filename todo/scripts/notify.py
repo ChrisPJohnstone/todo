@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from argparse import ArgumentParser, Namespace
+from sys import argv
 import logging
 
 from todo.services import NotificationService
@@ -10,7 +11,7 @@ def setup_logging(verbose: bool) -> None:
     logging.basicConfig(level=level)
 
 
-def notify() -> None:
+def notify(arg_input: list[str]) -> None:
     parser: ArgumentParser = ArgumentParser(
         prog="Notification Program",
         description="Sends a system notification based on input",
@@ -44,7 +45,7 @@ def notify() -> None:
         action="store_true",
         help="Increase output verbosity",
     )
-    args: Namespace = parser.parse_args()
+    args: Namespace = parser.parse_args(arg_input)
     setup_logging(args.verbose)
     service: NotificationService = NotificationService(
         title=args.title,
@@ -53,5 +54,5 @@ def notify() -> None:
     service.send(" ".join(args.message))
 
 
-if __name__ == "__main__":
-    notify()
+if __name__ == "__main__":  # pragma: no cover
+    notify(argv)
