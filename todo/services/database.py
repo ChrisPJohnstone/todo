@@ -40,28 +40,28 @@ class DatabaseService:
 
     @property
     def INSERT_QUERY(self) -> str:
-        return f"""
-        INSERT INTO "{self.TABLE_NAME}" ("message", "due")
-        VALUES (:message, :due)
-        RETURNING "id"
-        """
+        return (
+            f'INSERT INTO "{self.TABLE_NAME}" ("message", "due") '
+            f"VALUES (:message, :due) "
+            f'RETURNING "id"'
+        )
 
     @property
     def UPDATE_QUERY(self) -> str:
-        return f"""
-        UPDATE "{self.TABLE_NAME}"
-        SET {{fields}}
-        WHERE "id" = {{id}}
-        RETURNING "id"
-        """
+        return (
+            f'UPDATE "{self.TABLE_NAME}" '
+            f"SET {{fields}} "
+            f'WHERE "id" = {{id}} '
+            f'RETURNING "id"'
+        )
 
     @property
     def DELETE_QUERY(self) -> str:
-        return f"""
-        DELETE FROM "{self.TABLE_NAME}"
-        WHERE "id" = {{id}}
-        RETURNING "id"
-        """
+        return (
+            f'DELETE FROM "{self.TABLE_NAME}" '
+            f'WHERE "id" = {{id}} '
+            f'RETURNING "id"'
+        )
 
     def _execute(
         self,
