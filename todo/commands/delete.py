@@ -21,4 +21,7 @@ class Delete(Command):
     @staticmethod
     def run(args: Namespace) -> None:
         database: DatabaseService = DatabaseService()
-        database.delete(args.id[0])
+        results: list[tuple] = database.delete(args.id[0])
+        if len(results) <= 1:
+            print("No items deleted")
+            return

@@ -60,6 +60,7 @@ class DatabaseService:
         return f"""
         DELETE FROM "{self.TABLE_NAME}"
         WHERE "id" = {{id}}
+        RETURNING "id"
         """
 
     def _execute(
@@ -112,5 +113,5 @@ class DatabaseService:
         )
         return self.execute(query, fields)[1][0]
 
-    def delete(self, id: int) -> None:
-        self.execute(self.DELETE_QUERY.format(id=id))
+    def delete(self, id: int) -> list[tuple]:
+        return self.execute(self.DELETE_QUERY.format(id=id))
