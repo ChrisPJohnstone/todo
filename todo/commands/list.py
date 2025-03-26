@@ -35,4 +35,7 @@ class List(Command):
             include_completed=args.include_completed,
         )
         results: list[tuple] = database.get_list(criteria)
+        if len(results) <= 1:
+            print("No items found")
+            return
         print(tabulate(results[1:], headers=results[0]))
