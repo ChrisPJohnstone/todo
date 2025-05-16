@@ -19,7 +19,7 @@ dependencies = [
 
   [project.scripts]
   td = "todo.scripts:todo"
-  send-notification = "todo.scripts:notify"
+  send-notification = "todo.notify:main"
 
 [tool.setuptools.packages.find]
 include = ["*"]

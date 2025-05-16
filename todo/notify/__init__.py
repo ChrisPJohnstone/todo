@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from argparse import ArgumentParser, Namespace
 from sys import argv
 
@@ -43,7 +42,7 @@ def parse_args(args: list[str]) -> Namespace:
     return parser.parse_args(args)
 
 
-def notify() -> None:
+def main() -> None:
     args: Namespace = parse_args(argv[1:])
     setup_logging(args.verbose)
     service: NotificationService = NotificationService(
@@ -51,7 +50,3 @@ def notify() -> None:
         application_name=args.application_name,
     )
     service.send(" ".join(args.message))
-
-
-if __name__ == "__main__":  # pragma: no cover
-    notify()
