@@ -1,10 +1,10 @@
 from argparse import Namespace
 from unittest.mock import _Call, call, patch, MagicMock
 
-from todo.scripts.notify import notify, parse_args
+from src.scripts.notify import notify, parse_args
 from test_utils import parametrize, TestSet
 
-FILEPATH: str = "todo.scripts.notify"
+FILEPATH: str = "src.scripts.notify"
 
 
 parse_args_tests: TestSet = {

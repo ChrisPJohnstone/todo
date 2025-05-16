@@ -3,8 +3,8 @@ from argparse import ArgumentParser, BooleanOptionalAction, Namespace
 from tabulate import tabulate
 
 from .base import Command
-from todo.services import DatabaseService
-from todo.utils import QueryUtil
+from src.services import DatabaseService
+from src.utils import QueryUtil
 
 
 class List(Command):

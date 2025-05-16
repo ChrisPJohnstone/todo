@@ -2,8 +2,8 @@
 from argparse import _SubParsersAction, ArgumentParser, Namespace
 from sys import argv
 
-from todo.commands import COMMAND_DICT
-from todo.utils import setup_logging
+from src.commands import COMMAND_DICT
+from src.utils import setup_logging
 
 
 def parse_args(args: list[str]) -> Namespace:

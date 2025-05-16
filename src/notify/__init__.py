@@ -1,8 +1,8 @@
 from argparse import ArgumentParser, Namespace
 from sys import argv
 
-from todo.services import NotificationService
-from todo.utils import setup_logging
+from src.services import NotificationService
+from src.utils import setup_logging
 
 
 def parse_args(args: list[str]) -> Namespace:

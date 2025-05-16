@@ -1,9 +1,9 @@
 from unittest.mock import _Call, call, patch, MagicMock
 
-from todo.services import NotificationService
+from src.services import NotificationService
 from test_utils import parametrize, TestSet
 
-FILEPATH: str = "todo.services.notification"
+FILEPATH: str = "src.services.notification"
 
 
 send_tests: TestSet = {

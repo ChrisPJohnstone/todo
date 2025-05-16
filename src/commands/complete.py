@@ -2,7 +2,7 @@ from argparse import ArgumentParser, Namespace
 from datetime import datetime
 
 from .base import Command
-from todo.services import DatabaseService
+from src.services import DatabaseService
 
 
 class Complete(Command):

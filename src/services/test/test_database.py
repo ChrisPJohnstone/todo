@@ -3,10 +3,10 @@ from unittest.mock import _Call, call, patch, MagicMock
 
 from pytest import raises
 
-from todo.services import DatabaseService
+from src.services import DatabaseService
 from test_utils import parametrize, TestSet
 
-FILEPATH: str = "todo.services.database"
+FILEPATH: str = "src.services.database"
 
 
 def _mock_execute(mock_connect: MagicMock) -> MagicMock:

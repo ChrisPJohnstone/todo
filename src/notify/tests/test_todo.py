@@ -1,9 +1,9 @@
 from argparse import Namespace
 
-from todo.scripts.todo import parse_args
+from src.scripts.todo import parse_args
 from test_utils import parametrize, TestSet
 
-FILEPATH: str = "todo.scripts.todo"
+FILEPATH: str = "src.scripts.todo"
 
 
 parse_args_tests: TestSet = {

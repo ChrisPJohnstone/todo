@@ -1,5 +1,5 @@
 from test_utils import parametrize, TestSet
-from todo.utils import QueryUtil
+from src.utils import QueryUtil
 
 
 parse_criteria_tests: TestSet = {

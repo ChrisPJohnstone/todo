@@ -18,8 +18,8 @@ dependencies = [
   email = "chrispjohnstone97@gmail.com"
 
   [project.scripts]
-  td = "todo.scripts:todo"
-  send-notification = "todo.notify:main"
+  td = "src.scripts:todo"
+  send-notification = "src.notify:main"
 
 [tool.setuptools.packages.find]
 include = ["*"]
