@@ -18,7 +18,7 @@ dependencies = [
   email = "chrispjohnstone97@gmail.com"
 
   [project.scripts]
-  td = "src.scripts:todo"
+  td = "src.todo:main"
   send-notification = "src.notify:main"
 
 [tool.setuptools.packages.find]

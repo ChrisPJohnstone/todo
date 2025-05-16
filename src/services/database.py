@@ -109,7 +109,7 @@ class DatabaseService:
             raise ValueError("No fields to update")
         query: str = self.UPDATE_QUERY.format(
             fields=", ".join(f'"{field}" = :{field}' for field in fields),
-            id=id,
+            id=str(id),
         )
         return self.execute(query, fields)[1][0]
 

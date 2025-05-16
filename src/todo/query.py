@@ -2,26 +2,17 @@ from argparse import ArgumentParser, Namespace
 
 from tabulate import tabulate
 
-from .base import Command
+from ._base import Command
+from src.parsers import query
 from src.services import DatabaseService
 
 
 class Query(Command):
-    @property
-    def HELP(self) -> str:
-        return "Query the database"
-
     @staticmethod
-    def _add_args(parser: ArgumentParser) -> None:
-        parser.add_argument(
-            type=str,
-            dest="query",
-            help="Query to send",
-            nargs="+",
-        )
+    def parent_parsers() -> list[ArgumentParser]:
+        return [query()]
 
-    @staticmethod
-    def run(args: Namespace) -> None:
+    def __init__(self, args: Namespace) -> None:
         query: str = " ".join(args.query)
         database: DatabaseService = DatabaseService()
         results: list[tuple] = database.execute(query)

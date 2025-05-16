@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from argparse import _SubParsersAction, ArgumentParser, Namespace
+from argparse import ArgumentParser, Namespace
 from datetime import datetime
 from os import getenv
 
@@ -7,28 +7,13 @@ from src.services import ScheduleService
 
 
 class Command(ABC):
-    def __init__(self, name: str, subparsers: _SubParsersAction) -> None:
-        parser: ArgumentParser = subparsers.add_parser(
-            name=name,
-            description=self.HELP,
-        )
-        parser.add_argument(
-            "-v",
-            "--verbose",
-            dest="verbose",
-            action="store_true",
-            help="Increase output verbosity",
-        )
-        self._add_args(parser)
-
-    @property
-    @abstractmethod
-    def HELP(self) -> str:  # pragma: no cover
-        pass
-
     @staticmethod
     @abstractmethod
-    def _add_args(parser: ArgumentParser) -> None:  # pragma: no cover
+    def parent_parsers() -> list[ArgumentParser]:
+        pass
+
+    @abstractmethod
+    def __init__(self, args: Namespace) -> None:
         pass
 
     @staticmethod
@@ -48,8 +33,3 @@ class Command(ABC):
     def unschedule_notification(item_id: int) -> None:
         command: str = Command.notification_command(item_id)
         ScheduleService().unschedule(command=command)
-
-    @staticmethod
-    @abstractmethod
-    def run(args: Namespace) -> None:  # pragma: no cover
-        pass
