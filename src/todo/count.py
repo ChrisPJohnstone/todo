@@ -1,9 +1,9 @@
 from argparse import ArgumentParser, Namespace
 
 from ._base import Command
-from src.parsers import criteria, include_completed
-from src.services import DatabaseService
-from src.utils import QueryUtil
+from parsers import criteria, include_completed
+from services import DatabaseService
+from utils import QueryUtil
 
 
 class Count(Command):

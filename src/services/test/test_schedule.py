@@ -1,10 +1,10 @@
 from datetime import datetime
-from unittest.mock import _Call, ANY, call, patch, MagicMock
+from unittest.mock import _Call, call, patch, MagicMock
 
-from todo.services import ScheduleService
+from services import ScheduleService
 from test_utils import parametrize, TestSet
 
-FILEPATH: str = "todo.services.schedule"
+FILEPATH: str = "services.schedule"
 
 
 get_user_tests: TestSet = {

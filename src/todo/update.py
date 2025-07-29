@@ -2,9 +2,9 @@ from argparse import ArgumentParser, Namespace
 from datetime import datetime
 
 from ._base import Command
-from src.parsers import completed, due, item_id, message
-from src.services import DatabaseService
-from src.utils import DateUtil
+from parsers import completed, due, item_id, message
+from services import DatabaseService
+from utils import DateUtil
 
 
 class Update(Command):

@@ -3,7 +3,7 @@ from argparse import ArgumentParser, Namespace
 from datetime import datetime
 from os import getenv
 
-from src.services import ScheduleService
+from services import ScheduleService
 
 
 class Command(ABC):

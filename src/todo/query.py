@@ -3,8 +3,8 @@ from argparse import ArgumentParser, Namespace
 from tabulate import tabulate
 
 from ._base import Command
-from src.parsers import query
-from src.services import DatabaseService
+from parsers import query
+from services import DatabaseService
 
 
 class Query(Command):

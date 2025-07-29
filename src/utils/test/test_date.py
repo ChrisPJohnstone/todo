@@ -5,9 +5,9 @@ from unittest.mock import MagicMock, patch
 from pytest import raises
 
 from test_utils import parametrize, TestSet
-from src.utils import DateUtil
+from utils import DateUtil
 
-FILEPATH: str = "src.utils.date"
+FILEPATH: str = "utils.date"
 
 
 parse_tests: TestSet = {

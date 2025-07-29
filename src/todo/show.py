@@ -1,8 +1,8 @@
 from argparse import ArgumentParser, Namespace
 
 from ._base import Command
-from src.parsers import item_id
-from src.services import DatabaseService
+from parsers import item_id
+from services import DatabaseService
 
 
 class Show(Command):

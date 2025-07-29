@@ -18,12 +18,13 @@ dependencies = [
   email = "chrispjohnstone97@gmail.com"
 
   [project.scripts]
-  td = "src.todo:main"
-  send-notification = "src.notify:main"
+  td = "todo:main"
+  send-notification = "notify:main"
 
 [tool.setuptools.packages.find]
+where = ["src"]
 include = ["*"]
-exclude = ["*tests*"]
+exclude = ["*test*"]
 namespaces = true
 
 [tool.black]
