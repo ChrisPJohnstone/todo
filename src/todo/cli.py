@@ -7,15 +7,17 @@ from argparse import (
 from collections.abc import Callable
 import logging
 
-from ._base import Command
-from .complete import Complete
-from .count import Count
-from .create import Create
-from .delete import Delete
-from .list_items import ListItems
-from .query import Query
-from .show import Show
-from .update import Update
+from todo import (
+    Command,
+    Complete,
+    Count,
+    Create,
+    Delete,
+    ListItems,
+    Query,
+    Show,
+    Update,
+)
 from parsers import verbose
 
 

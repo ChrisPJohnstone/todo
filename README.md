@@ -14,6 +14,10 @@ CLI app to manage todo list.
 - `td show [id]` shows a specific todo item
 - `td update [id]` updates a todo item. Change due date example `td updaet 3 --due monday`
 
+## Development
+
+- You can run libraries without instal by calling dir e.g. `python src/todo/` or `python src/notify/`
+
 # TMUX Integration
 
 You can use widgets (e.g. `#(while td count; do sleep 5; done)`) to include td items in your status bar.
