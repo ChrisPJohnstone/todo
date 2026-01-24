@@ -40,7 +40,6 @@ class TableFormatter:
         if not hasattr(self, "_max_width"):
             self._max_width: int = terminal_width()
         return self._max_width
-        # TODO: Handle case where table is wider than terminal
 
     @property
     def headers(self) -> Row:
@@ -88,11 +87,17 @@ class TableFormatter:
             column_widths: list[int] = []
             for index in range(self.n_columns):
                 column_widths.append(self.column_width(index))
-            self._column_widths: list[int] = column_widths
+            self.column_widths = column_widths
         return self._column_widths
 
     @column_widths.setter
     def column_widths(self, value: list[int]) -> None:
+        width_seperators: int = len(self.column_seperator) * (len(value) - 1)
+        width_total: int = sum(value) + width_seperators
+        if width_total > self.max_width:
+            self.divide_all_lines = True
+            self._dividing_line: str = "-" * self.max_width
+            # TODO: Handle resizing columns to fit terminal width
         self._column_widths: list[int] = value
 
     @property
