@@ -1,8 +1,10 @@
-# Overview
+# ToDo CLI
 
-CLI app to manage todo list.
+## Overview
 
-# Usage
+CLI app to manage todo list written in Python standard library. Uses SQLite as backend database.
+
+## Usage
 
 - `td --help` will show you all the up date options for using the tool
 - `td add` creates a todo item. Example `td add do the dishes`
@@ -18,6 +20,6 @@ CLI app to manage todo list.
 
 - You can run without install by calling dir e.g. `python src/todo/`
 
-# TMUX Integration
+## TMUX Integration
 
 You can use widgets (e.g. `#(while td count; do sleep 5; done)`) to include td items in your status bar.
