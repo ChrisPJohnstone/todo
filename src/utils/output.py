@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 from argparse import ArgumentParser, Namespace
 
-from .miscellaneous import Alignment, pad_string
+from .miscellaneous import pad_string
 from .terminal import terminal_width
+from constants import Alignment
 from type_definitions import Cell, Row, Rows
 
 
