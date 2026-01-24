@@ -17,4 +17,4 @@ def main() -> None:
     )
     args: Namespace = parser.parse_args()
     notification_service: NotificationService = NotificationService()
-    notification_service.send_nofification(" ".join(args.message))
+    notification_service.send_notification(" ".join(args.message))

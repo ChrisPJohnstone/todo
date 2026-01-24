@@ -3,7 +3,7 @@ from datetime import datetime
 
 from ._base import Command
 from parsers import due, message
-from services import DatabaseService
+from services import DatabaseService, ScheduleService
 from utils import DateUtil
 
 
@@ -19,4 +19,6 @@ class Create(Command):
             message=" ".join(args.message),
             due=DateUtil.format(due),
         )
-        print(f"Added as item {item_id}")
+        if due:
+            scheduler: ScheduleService = ScheduleService()
+            scheduler.schedule_notification(due, " ".join(args.message))

@@ -43,7 +43,7 @@ class NotificationService:
             self._operating_system: Platform = operating_system()
         return self._operating_system
 
-    def send_nofification(self, message: str) -> None:
+    def send_notification(self, message: str) -> None:
         """
         Send a notification to the user.
 
