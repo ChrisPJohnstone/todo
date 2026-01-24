@@ -11,13 +11,16 @@ class TableFormatter:
 
     DEFAULT_COLUMN_SEPERATOR: str = " | "
     DEFAULT_DIVIDE_ALL_LINES: bool = False
+    DEFAULT_ALIGNMENT: Alignment = Alignment.CENTER
 
     def __init__(
         self,
         rows: Rows,
         headers: Row | None = None,
-        column_seperator: str | None = None,
+        column_seperator: str = DEFAULT_COLUMN_SEPERATOR,
         divide_all_lines: bool = DEFAULT_DIVIDE_ALL_LINES,
+        header_alignment: Alignment = DEFAULT_ALIGNMENT,
+        row_alignment: Alignment = DEFAULT_ALIGNMENT,
     ) -> None:
         """
         Print data in a table format to the terminal.
@@ -27,13 +30,16 @@ class TableFormatter:
             headers (Row | None): An optional iterable of header names for the table columns.
             column_seperator (str | None): An optional string to separate columns. Defaults to " | ".
             divide_all_lines (bool): Whether to divide all lines with a separating line. Defaults to False.
+            header_alignment (Alignment | None): Alignment for header cells. Defaults to CENTER.
+            row_alignment (Alignment | None): Alignment for row cells. Defaults to CENTER.
         """
         if headers is not None:
             self.headers = headers
         self.rows = rows
-        if column_seperator is not None:
-            self.column_seperator = column_seperator
+        self.column_seperator = column_seperator
         self.divide_all_lines = divide_all_lines
+        self.header_alignment = header_alignment
+        self.row_alignment = row_alignment
 
     @property
     def max_width(self) -> int:
@@ -104,9 +110,38 @@ class TableFormatter:
     @property
     def column_seperator(self) -> str:
         """Column seperator string"""
-        if not hasattr(self, "_column_seperator"):
-            self._column_seperator: str = self.DEFAULT_COLUMN_SEPERATOR
         return self._column_seperator
+
+    @column_seperator.setter
+    def column_seperator(self, value: str) -> None:
+        self._column_seperator: str = value
+
+    @property
+    def divide_all_lines(self) -> bool:
+        """Whether to divide all lines with a separating line"""
+        return self._divide_all_lines
+
+    @divide_all_lines.setter
+    def divide_all_lines(self, value: bool) -> None:
+        self._divide_all_lines: bool = value
+
+    @property
+    def header_alignment(self) -> Alignment:
+        """Alignment for header cells"""
+        return self._header_alignment
+
+    @header_alignment.setter
+    def header_alignment(self, value: Alignment) -> None:
+        self._header_alignment: Alignment = value
+
+    @property
+    def row_alignment(self) -> Alignment:
+        """Alignment for row cells"""
+        return self._row_alignment
+
+    @row_alignment.setter
+    def row_alignment(self, value: Alignment) -> None:
+        self._row_alignment: Alignment = value
 
     @property
     def dividing_line(self) -> str:
@@ -277,7 +312,7 @@ class TableFormatter:
         for index, row in enumerate(self.rows):
             if len(row) != self.n_columns:
                 raise ValueError(f"Row {index} has incorrect number of columns")
-            lines.append(self.generate_row_string(row, Alignment.LEFT))
+            lines.append(self.generate_row_string(row, Alignment.CENTER))
             if self.divide_all_lines and index < self.n_rows - 1:
                 lines.append(self.dividing_line)
         return "\n".join(lines)
