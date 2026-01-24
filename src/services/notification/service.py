@@ -1,19 +1,14 @@
-from collections.abc import Callable
 from typing import Final
 
 from ._linux import _send_notification_linux
+from ._mac import _send_notification_mac
 from constants import Platform
 from utils import operating_system
-
-type SendMethod = Callable[[str, int, str], None]
 
 
 class NotificationService:
     DEFAULT_APP_NAME: Final[str] = "todo"
     DEFAULT_EXPIRY_TIME: Final[int] = 3
-    SEND_METHODS: Final[dict[Platform, SendMethod]] = {
-        Platform.LINUX: _send_notification_linux,
-    }
 
     def __init__(
         self,
@@ -49,8 +44,25 @@ class NotificationService:
         return self._operating_system
 
     def send_nofification(self, message: str) -> None:
-        self.SEND_METHODS[self.operating_system](
-            self.app_name,
-            self.expiry_time,
-            message,
-        )
+        """
+        Send a notification to the user.
+
+        Args:
+            message (str): The message to be sent in the notification.
+        """
+        match self.operating_system:
+            case Platform.MAC:
+                _send_notification_mac(
+                    title=self.app_name,
+                    message=message,
+                )
+            case Platform.LINUX:
+                _send_notification_linux(
+                    app_name=self.app_name,
+                    expiry_time=self.expiry_time,
+                    message=message,
+                )
+            case _:
+                raise NotImplementedError(
+                    f"Notifications not supported on {self.operating_system}"
+                )
