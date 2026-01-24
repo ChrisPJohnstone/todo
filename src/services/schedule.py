@@ -9,6 +9,8 @@ from .notification import NotificationService
 class ScheduleService:
     def __init__(self) -> None:
         self.scheduler = sched.scheduler(time)
+        # TODO: Handle persistence of scheduled tasks
+        # TODO: Handle stopping scheduled tasks if due modified
 
     @property
     def scheduler(self) -> sched.scheduler:
