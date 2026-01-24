@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from argparse import ArgumentParser, Namespace
 
+from .miscellaneous import Alignment, pad_string
 from .terminal import terminal_width
 from type_definitions import Cell, Row, Rows
 
@@ -215,7 +216,7 @@ class TableFormatter:
             lines.append(current_line)
         return lines
 
-    def generate_row_string(self, row: Row) -> str:
+    def generate_row_string(self, row: Row, alignment: Alignment) -> str:
         """
         Generate the string representation of a row.
 
@@ -231,7 +232,12 @@ class TableFormatter:
             cell_max_width: int = self.column_widths[index]
             cell_str: str = str(cell)
             if len(cell_str) < cell_max_width:
-                wrapped_cells.append([f"{cell_str:<{cell_max_width}}"])
+                cell_padded: str = pad_string(
+                    value=cell_str,
+                    width=cell_max_width,
+                    alignment=alignment,
+                )
+                wrapped_cells.append([cell_padded])
                 continue
             wrapped_cell: list[str] = self.wrap_string(cell_str, cell_max_width)
             n_lines: int = len(wrapped_cell)
@@ -247,7 +253,12 @@ class TableFormatter:
                 else:
                     cell_line: str = ""
                 cell_width: int = self.column_widths[cell_index]
-                line_cells.append(f"{cell_line:<{cell_width}}")
+                cell_padded: str = pad_string(
+                    value=cell_line,
+                    width=cell_width,
+                    alignment=alignment,
+                )
+                line_cells.append(cell_padded)
             lines.append(self.column_seperator.join(line_cells))
         return "\n".join(lines)
 
@@ -260,12 +271,13 @@ class TableFormatter:
         """
         lines: list[str] = []
         if self.has_headers:
-            lines.append(self.generate_row_string(self.headers))
+            line: str = self.generate_row_string(self.headers, Alignment.CENTER)
+            lines.append(line)
             lines.append(self.dividing_line)
         for index, row in enumerate(self.rows):
             if len(row) != self.n_columns:
                 raise ValueError(f"Row {index} has incorrect number of columns")
-            lines.append(self.generate_row_string(row))
+            lines.append(self.generate_row_string(row, Alignment.LEFT))
             if self.divide_all_lines and index < self.n_rows - 1:
                 lines.append(self.dividing_line)
         return "\n".join(lines)
