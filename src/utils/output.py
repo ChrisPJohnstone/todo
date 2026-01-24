@@ -2,10 +2,7 @@
 from argparse import ArgumentParser, Namespace
 
 from .terminal import terminal_width
-
-type Cell = str | int
-type Row = list[Cell] | tuple[Cell]
-type Rows = list[Row] | tuple[Row]
+from type_definitions import Cell, Row, Rows
 
 
 class TableFormatter:
