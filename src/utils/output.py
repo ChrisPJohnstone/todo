@@ -9,12 +9,14 @@ class TableFormatter:
     """A simple table formatter for terminal output."""
 
     DEFAULT_COLUMN_SEPERATOR: str = " | "
+    DEFAULT_DIVIDE_ALL_LINES: bool = False
 
     def __init__(
         self,
         rows: Rows,
         headers: Row | None = None,
         column_seperator: str | None = None,
+        divide_all_lines: bool = DEFAULT_DIVIDE_ALL_LINES,
     ) -> None:
         """
         Print data in a table format to the terminal.
@@ -22,12 +24,15 @@ class TableFormatter:
         Args:
             data (Rows): An iterable of rows, where each row is an iterable of cell values.
             headers (Row | None): An optional iterable of header names for the table columns.
+            column_seperator (str | None): An optional string to separate columns. Defaults to " | ".
+            divide_all_lines (bool): Whether to divide all lines with a separating line. Defaults to False.
         """
         if headers is not None:
             self.headers = headers
         self.rows = rows
         if column_seperator is not None:
             self.column_seperator = column_seperator
+        self.divide_all_lines = divide_all_lines
 
     @property
     def max_width(self) -> int:
@@ -174,6 +179,8 @@ class TableFormatter:
             if len(row) != self.n_columns:
                 raise ValueError(f"Row {index} has incorrect number of columns")
             lines.append(self.generate_row_string(row))
+            if self.divide_all_lines and index < self.n_rows - 1:
+                lines.append(self.dividing_line)
         return "\n".join(lines)
 
     def __repr__(self) -> str:
