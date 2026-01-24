@@ -1,11 +1,9 @@
 from argparse import ArgumentParser, Namespace
 
-from tabulate import tabulate
-
 from ._base import Command
 from parsers import criteria, include_completed
 from services import DatabaseService
-from utils import QueryUtil
+from utils import TableFormatter, QueryUtil
 
 
 class ListItems(Command):
@@ -23,4 +21,4 @@ class ListItems(Command):
         if len(results) <= 1:
             print("No items found")
             return
-        print(tabulate(results[1:], headers=results[0]))
+        print(TableFormatter(results[1:], headers=results[0]))
