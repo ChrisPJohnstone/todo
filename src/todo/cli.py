@@ -18,7 +18,7 @@ from todo import (
     Show,
     Update,
 )
-from constants import Commands
+from constants import Commands, HELP_COMMANDS
 from parsers import verbose
 
 
@@ -47,7 +47,6 @@ def main() -> None:
         title="command",
         dest="command",
         metavar="<command>",
-        help=f"One of:\n- {'\n- '.join(COMMANDS.keys())}",
         required=True,
     )
     for name, command in COMMANDS.items():
@@ -55,6 +54,8 @@ def main() -> None:
             name=name,
             formatter_class=RawTextHelpFormatter,
             parents=[*shared, *command.parent_parsers()],
+            help=HELP_COMMANDS[Commands(name)],
+            description=HELP_COMMANDS[Commands(name)],
         )
     args: Namespace = parser.parse_args()
     if getattr(args, "verbose", False):
