@@ -98,6 +98,13 @@ class TableFormatter:
         return self._column_seperator
 
     @property
+    def dividing_line(self) -> str:
+        """String representation of the dividing line"""
+        if not hasattr(self, "_dividing_line"):
+            self._dividing_line: str = self.generate_dividing_line()
+        return self._dividing_line
+
+    @property
     def table_string(self) -> str:
         """String representation of the table"""
         if not hasattr(self, "_table_string"):
@@ -126,6 +133,16 @@ class TableFormatter:
                 width = len_cell
         return width
 
+    def generate_dividing_line(self) -> str:
+        """
+        Generate the dividing line string.
+
+        Returns:
+            str: The dividing line string.
+        """
+        cells: list[str] = ["-" * width for width in self.column_widths]
+        return self.column_seperator.join(cells)
+
     def generate_row_string(self, row: Row) -> str:
         """
         Generate the string representation of a row.
@@ -152,6 +169,7 @@ class TableFormatter:
         lines: list[str] = []
         if self.has_headers:
             lines.append(self.generate_row_string(self.headers))
+            lines.append(self.dividing_line)
         for index, row in enumerate(self.rows):
             if len(row) != self.n_columns:
                 raise ValueError(f"Row {index} has incorrect number of columns")
