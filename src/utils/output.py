@@ -10,6 +10,7 @@ class TableFormatter:
 
     DEFAULT_COLUMN_SEPERATOR: str = " | "
     DEFAULT_DIVIDE_ALL_LINES: bool = False
+    MIN_COLUMN_WIDTH: int = 10
 
     def __init__(
         self,
@@ -81,6 +82,17 @@ class TableFormatter:
         return self._n_columns
 
     @property
+    def distribute_column_widths(self) -> list[int]:
+        """Column widths when distributed evenly across terminal width"""
+        if not hasattr(self, "_distribute_column_widths"):
+            seperator_width: int = len(self.column_seperator)
+            total_seperator_width: int = seperator_width * (self.n_columns - 1)
+            available_width: int = self.max_width - total_seperator_width
+            base: int = available_width // self.n_columns
+            self._distributed_column_widths: list[int] = [base] * self.n_columns
+        return self._distributed_column_widths
+
+    @property
     def column_widths(self) -> list[int]:
         """List of column widths"""
         if not hasattr(self, "_column_widths"):
@@ -94,11 +106,11 @@ class TableFormatter:
     def column_widths(self, value: list[int]) -> None:
         width_seperators: int = len(self.column_seperator) * (len(value) - 1)
         width_total: int = sum(value) + width_seperators
-        if width_total > self.max_width:
-            self.divide_all_lines = True
-            self._dividing_line: str = "-" * self.max_width
-            # TODO: Handle resizing columns to fit terminal width
-        self._column_widths: list[int] = value
+        if width_total <= self.max_width:
+            self._column_widths: list[int] = value
+            return
+        self._column_widths = self.distribute_column_widths
+        self.divide_all_lines = True
 
     @property
     def column_seperator(self) -> str:
@@ -153,6 +165,35 @@ class TableFormatter:
         cells: list[str] = ["-" * width for width in self.column_widths]
         return self.column_seperator.join(cells)
 
+    def wrap_string(self, value: str, width: int) -> list[str]:
+        """
+        Wrap a string to fit within a specified width.
+
+        Args:
+            value (str): The string to wrap.
+            width (int): The maximum width of each line.
+
+        Returns:
+            list[str]: A list of wrapped lines.
+        """
+        if len(value) <= width:
+            return [value]
+        lines: list[str] = []
+        current_line: str = ""
+        for word in value.split(" "):
+            len_current_line: int = len(current_line)
+            if len_current_line + len(word) + 1 <= width:
+                if len_current_line > 0:
+                    current_line += " "
+                current_line += word
+            else:
+                if len_current_line > 0:
+                    lines.append(current_line)
+                current_line = word
+        if len(current_line) > 0:
+            lines.append(current_line)
+        return lines
+
     def generate_row_string(self, row: Row) -> str:
         """
         Generate the string representation of a row.
@@ -163,11 +204,31 @@ class TableFormatter:
         Returns:
             str: The string representation of the row.
         """
-        cell_strings: list[str] = [
-            f"{str(cell):<{self.column_widths[index]}}"
-            for index, cell in enumerate(row)
-        ]
-        return self.column_seperator.join(cell_strings)
+        max_lines: int = 1
+        wrapped_cells: list[list[str]] = []
+        for index, cell in enumerate(row):
+            cell_max_width: int = self.column_widths[index]
+            cell_str: str = str(cell)
+            if len(cell_str) < cell_max_width:
+                wrapped_cells.append([f"{cell_str:<{cell_max_width}}"])
+                continue
+            wrapped_cell: list[str] = self.wrap_string(cell_str, cell_max_width)
+            n_lines: int = len(wrapped_cell)
+            if n_lines > max_lines:
+                max_lines = n_lines
+            wrapped_cells.append(wrapped_cell)
+        lines: list[str] = []
+        for line_index in range(max_lines):
+            line_cells: list[str] = []
+            for cell_index, wrapped_cell in enumerate(wrapped_cells):
+                if line_index < len(wrapped_cell):
+                    cell_line: str = wrapped_cell[line_index]
+                else:
+                    cell_line: str = ""
+                cell_width: int = self.column_widths[cell_index]
+                line_cells.append(f"{cell_line:<{cell_width}}")
+            lines.append(self.column_seperator.join(line_cells))
+        return "\n".join(lines)
 
     def generate_table_string(self) -> str:
         """
