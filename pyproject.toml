@@ -1,6 +1,6 @@
 [project]
 name = "todo"
-version = "0.2"
+version = "0.3"
 description = "CLI todo list manager"
 readme = "README.md"
 requires-python = ">=3.13.0"
@@ -12,7 +12,6 @@ dynamic = ["dependencies"]
 
   [project.scripts]
   td = "todo.cli:main"
-  send-notification = "notify:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

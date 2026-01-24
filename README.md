@@ -16,7 +16,7 @@ CLI app to manage todo list.
 
 ## Development
 
-- You can run libraries without instal by calling dir e.g. `python src/todo/` or `python src/notify/`
+- You can run without install by calling dir e.g. `python src/todo/`
 
 # TMUX Integration
 

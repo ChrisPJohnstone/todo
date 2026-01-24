@@ -18,4 +18,3 @@ class Complete(Command):
             id=args.id[0],
             fields={"completed": True, "completed_at": now},
         )
-        Complete.unschedule_notification(args.id[0])

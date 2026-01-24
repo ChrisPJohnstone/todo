@@ -20,5 +20,3 @@ class Create(Command):
             due=DateUtil.format(due),
         )
         print(f"Added as item {item_id}")
-        if due:
-            Create.schedule_notification(item_id, due)
