@@ -18,18 +18,19 @@ from todo import (
     Show,
     Update,
 )
+from constants import Commands
 from parsers import verbose
 
 
 COMMANDS: dict[str, type[Command]] = {
-    "add": Create,
-    "complete": Complete,
-    "count": Count,
-    "rm": Delete,
-    "ls": ListItems,
-    "query": Query,
-    "show": Show,
-    "update": Update,
+    Commands.COMPLETE: Complete,
+    Commands.COUNT: Count,
+    Commands.CREATE: Create,
+    Commands.DELETE: Delete,
+    Commands.LIST: ListItems,
+    Commands.QUERY: Query,
+    Commands.SHOW: Show,
+    Commands.UPDATE: Update,
 }
 SHARED_PARSERS: list[Callable[[], ArgumentParser]] = [verbose]
 
