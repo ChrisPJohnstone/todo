@@ -11,7 +11,8 @@ class TableFormatter:
 
     DEFAULT_COLUMN_SEPERATOR: str = " | "
     DEFAULT_DIVIDE_ALL_LINES: bool = False
-    DEFAULT_ALIGNMENT: Alignment = Alignment.CENTER
+    DEFAULT_HEADER_ALIGNMENT: Alignment = Alignment.CENTER
+    DEFAULT_ROW_ALIGNMENT: Alignment = Alignment.LEFT
 
     def __init__(
         self,
@@ -19,8 +20,8 @@ class TableFormatter:
         headers: Row | None = None,
         column_seperator: str = DEFAULT_COLUMN_SEPERATOR,
         divide_all_lines: bool = DEFAULT_DIVIDE_ALL_LINES,
-        header_alignment: Alignment = DEFAULT_ALIGNMENT,
-        row_alignment: Alignment = DEFAULT_ALIGNMENT,
+        header_alignment: Alignment = DEFAULT_HEADER_ALIGNMENT,
+        row_alignment: Alignment = DEFAULT_ROW_ALIGNMENT,
     ) -> None:
         """
         Print data in a table format to the terminal.
@@ -306,13 +307,16 @@ class TableFormatter:
         """
         lines: list[str] = []
         if self.has_headers:
-            line: str = self.generate_row_string(self.headers, Alignment.CENTER)
+            line: str = self.generate_row_string(
+                row=self.headers,
+                alignment=self.header_alignment,
+            )
             lines.append(line)
             lines.append(self.dividing_line)
         for index, row in enumerate(self.rows):
             if len(row) != self.n_columns:
                 raise ValueError(f"Row {index} has incorrect number of columns")
-            lines.append(self.generate_row_string(row, Alignment.CENTER))
+            lines.append(self.generate_row_string(row, self.row_alignment))
             if self.divide_all_lines and index < self.n_rows - 1:
                 lines.append(self.dividing_line)
         return "\n".join(lines)
