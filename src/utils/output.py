@@ -10,7 +10,6 @@ class TableFormatter:
 
     DEFAULT_COLUMN_SEPERATOR: str = " | "
     DEFAULT_DIVIDE_ALL_LINES: bool = False
-    MIN_COLUMN_WIDTH: int = 10
 
     def __init__(
         self,
@@ -82,17 +81,6 @@ class TableFormatter:
         return self._n_columns
 
     @property
-    def distribute_column_widths(self) -> list[int]:
-        """Column widths when distributed evenly across terminal width"""
-        if not hasattr(self, "_distribute_column_widths"):
-            seperator_width: int = len(self.column_seperator)
-            total_seperator_width: int = seperator_width * (self.n_columns - 1)
-            available_width: int = self.max_width - total_seperator_width
-            base: int = available_width // self.n_columns
-            self._distributed_column_widths: list[int] = [base] * self.n_columns
-        return self._distributed_column_widths
-
-    @property
     def column_widths(self) -> list[int]:
         """List of column widths"""
         if not hasattr(self, "_column_widths"):
@@ -109,7 +97,7 @@ class TableFormatter:
         if width_total <= self.max_width:
             self._column_widths: list[int] = value
             return
-        self._column_widths = self.distribute_column_widths
+        self._column_widths = self.distribute_column_widths(value)
         self.divide_all_lines = True
 
     @property
@@ -154,6 +142,39 @@ class TableFormatter:
             if len_cell > width:
                 width = len_cell
         return width
+
+    def distribute_column_widths(self, original_widths: list[int]) -> list[int]:
+        """
+        Distribute column widths to fit within the maximum width.
+        If a column's width is less than the average remaining width, it is kept as is.
+
+        Args:
+            original_widths (list[int]): The original widths of the columns.
+
+        Returns:
+            list[int]: The adjusted widths of the columns.
+        """
+        seperator_width: int = len(self.column_seperator)
+        total_seperator_width: int = seperator_width * (self.n_columns - 1)
+        remaining_width: int = self.max_width - total_seperator_width
+        unresolved: list[int] = list(range(self.n_columns))
+        resolved: dict[int, int] = {}
+        while len(unresolved) > 0:
+            remaining_avg: int = remaining_width // len(unresolved)
+            for index, width in enumerate(original_widths):
+                if index in resolved:
+                    continue
+                if width <= remaining_avg:
+                    resolved[index] = width
+                    unresolved.remove(index)
+                    remaining_width -= width
+                    break
+                if index == unresolved[-1]:
+                    resolved[index] = remaining_avg
+                    unresolved.remove(index)
+                    remaining_width -= remaining_avg
+                    continue
+        return [resolved[i] for i in range(self.n_columns)]
 
     def generate_dividing_line(self) -> str:
         """
