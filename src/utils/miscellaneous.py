@@ -1,4 +1,13 @@
-from constants import Alignment
+from platform import system
+
+from constants import Alignment, Platform
+
+
+def operating_system() -> Platform:
+    try:
+        return Platform(system().lower())
+    except ValueError:
+        raise NotImplementedError(f"Unsupported OS: {system()}")
 
 
 def pad_string(

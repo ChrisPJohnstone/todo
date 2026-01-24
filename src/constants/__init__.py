@@ -1,3 +1,4 @@
 from .enum_alignment import Alignment
 from .enum_commands import Commands
+from .enum_platform import Platform
 from .help_commands import HELP_COMMANDS

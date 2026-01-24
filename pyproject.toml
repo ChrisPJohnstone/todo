@@ -11,6 +11,7 @@ requires-python = ">=3.13.0"
 
   [project.scripts]
   td = "todo.cli:main"
+  notify = "notify.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
