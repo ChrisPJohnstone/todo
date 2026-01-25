@@ -31,6 +31,14 @@ class DaemonService:
         """Boolean indicating if the pidfile exists."""
         return self.pidfile.exists()
 
+    @property
+    def notifier(self) -> NotificationService:
+        return self._notifier
+
+    @notifier.setter
+    def notifier(self, value: NotificationService) -> None:
+        self._notifier: NotificationService = value
+
     def delete_pidfile(self) -> None:
         """Deleted pidfile"""
         self.pidfile.unlink()
@@ -119,10 +127,10 @@ class DaemonService:
 
     def run(self) -> None:
         """Daemon main loop."""
-        notifier: NotificationService = NotificationService()
+        self.notifier = NotificationService()
         while True:
             sleep(1)
-            notifier.send_notification("test")
+            self.notifier.send_notification("test")
 
     def _message(self, message: str) -> str:
         return f"Daemon: {message}"
