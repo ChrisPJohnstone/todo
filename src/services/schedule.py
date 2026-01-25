@@ -50,5 +50,6 @@ class ScheduleService:
             kwargs={"message": message},
         )
 
-    def run(self) -> None:
-        self.scheduler.run()
+    def run(self, blocking: bool = True) -> None:
+        """Run all events in scheduler"""
+        self.scheduler.run(blocking)

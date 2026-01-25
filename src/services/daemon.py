@@ -147,9 +147,11 @@ class DaemonService:
         last_updated: datetime = datetime.fromtimestamp(0)
         while True:
             sleep(1)
+            self.scheduler.run(blocking=False)
             if (update_check := self.database_last_update()) < last_updated:
                 continue
             last_updated = update_check
+            self.scheduler.clear()
             next_item: tuple | None = self.next_item()
             if next_item is None:
                 continue
@@ -159,8 +161,6 @@ class DaemonService:
             )
             message: str = next_item[2]
             self.scheduler.add_notification(due, message)
-            self.scheduler.run()
-            # TODO: Move scheduler to killable thread
 
     def database_last_update(self) -> datetime:
         epoch: float = os.path.getmtime(self.database_client.DATABASE)
