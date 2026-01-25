@@ -7,10 +7,12 @@ from .notification import NotificationService
 
 
 class ScheduleService:
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        notifier: NotificationService | None = None,
+    ) -> None:
+        self.notifier = notifier or NotificationService()
         self.scheduler = sched.scheduler(time)
-        # TODO: Handle persistence of scheduled tasks
-        # TODO: Handle stopping scheduled tasks if due modified
 
     @property
     def scheduler(self) -> sched.scheduler:
@@ -22,18 +24,31 @@ class ScheduleService:
 
     @property
     def notifier(self) -> NotificationService:
-        if not hasattr(self, "_notifier"):
-            self._notifier: NotificationService = NotificationService()
         return self._notifier
 
-    def schedule_notification(self, due: datetime, message: str) -> None:
+    @notifier.setter
+    def notifier(self, value: NotificationService) -> None:
+        self._notifier: NotificationService = value
+
+    def clear(self) -> None:
+        """Clear all events from scheduler"""
+        for event in self.scheduler.queue:
+            self.scheduler.cancel(event)
+
+    def add_notification(self, due: datetime, message: str) -> None:
+        """
+        Add a notification to the scheduler
+
+        Args:
+            due (datetime): Time for notification to send
+            message (str): Message to show in notification
+        """
         self.scheduler.enterabs(
             time=due.timestamp(),
             priority=1,
             action=self.notifier.send_notification,
             kwargs={"message": message},
         )
-        child_pid: int = fork()
-        if child_pid != 0:
-            return
+
+    def run(self) -> None:
         self.scheduler.run()

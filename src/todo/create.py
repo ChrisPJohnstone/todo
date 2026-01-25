@@ -3,7 +3,7 @@ from datetime import datetime
 
 from ._base import Command
 from parsers import due, message
-from services import DatabaseService, ScheduleService
+from services import DatabaseService
 from utils import DateUtil
 
 
@@ -19,6 +19,3 @@ class Create(Command):
             message=" ".join(args.message),
             due=DateUtil.format(due),
         )
-        if due:
-            scheduler: ScheduleService = ScheduleService()
-            scheduler.schedule_notification(due, " ".join(args.message))

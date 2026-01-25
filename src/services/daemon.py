@@ -1,4 +1,5 @@
 from atexit import register
+from datetime import datetime
 from pathlib import Path
 from signal import SIGTERM
 from sys import exit, stderr, stdin, stdout
@@ -7,14 +8,22 @@ from typing import Final
 from logging import DEBUG, log
 import os
 
-from .notification import NotificationService
+from .database import DatabaseService
+from .schedule import ScheduleService
 
 
 class DaemonService:
     DEFAULT_PIDFILE: Final[Path] = Path("/tmp/todo/todo.pid")
 
-    def __init__(self, pidfile: Path = DEFAULT_PIDFILE) -> None:
+    def __init__(
+        self,
+        pidfile: Path = DEFAULT_PIDFILE,
+        database_client: DatabaseService | None = None,
+        scheduler: ScheduleService | None = None,
+    ) -> None:
         self.pidfile = pidfile
+        self.database_client = database_client or DatabaseService()
+        self.scheduler = scheduler or ScheduleService()
 
     @property
     def pidfile(self) -> Path:
@@ -32,12 +41,20 @@ class DaemonService:
         return self.pidfile.exists()
 
     @property
-    def notifier(self) -> NotificationService:
-        return self._notifier
+    def database_client(self) -> DatabaseService:
+        return self._database_client
 
-    @notifier.setter
-    def notifier(self, value: NotificationService) -> None:
-        self._notifier: NotificationService = value
+    @database_client.setter
+    def database_client(self, value: DatabaseService) -> None:
+        self._database_client: DatabaseService = value
+
+    @property
+    def scheduler(self) -> ScheduleService:
+        return self._scheduler
+
+    @scheduler.setter
+    def scheduler(self, value: ScheduleService) -> None:
+        self._scheduler: ScheduleService = value
 
     def delete_pidfile(self) -> None:
         """Deleted pidfile"""
@@ -127,10 +144,37 @@ class DaemonService:
 
     def run(self) -> None:
         """Daemon main loop."""
-        self.notifier = NotificationService()
+        last_updated: datetime = datetime.fromtimestamp(0)
         while True:
             sleep(1)
-            self.notifier.send_notification("test")
+            if (update_check := self.database_last_update()) < last_updated:
+                continue
+            last_updated = update_check
+            next_item: tuple | None = self.next_item()
+            if next_item is None:
+                continue
+            due: datetime = datetime.strptime(
+                next_item[3],
+                self.database_client.DATE_PATTERN,
+            )
+            message: str = next_item[2]
+            self.scheduler.add_notification(due, message)
+            self.scheduler.run()
+            # TODO: Move scheduler to killable thread
+
+    def database_last_update(self) -> datetime:
+        epoch: float = os.path.getmtime(self.database_client.DATABASE)
+        return datetime.fromtimestamp(epoch)
+
+    def next_item(self) -> tuple | None:
+        """Get next reminder due date"""
+        criteria: str = (
+            "WHERE \"due\" > DATETIME('now') ORDER BY \"due\" ASC LIMIT 1"
+        )
+        items: list[tuple] = self.database_client.get_list(criteria)
+        if len(items) == 1:
+            return
+        return items[1]
 
     def _message(self, message: str) -> str:
         return f"Daemon: {message}"

@@ -20,6 +20,7 @@ from todo import (
 )
 from constants import Commands, HELP_COMMANDS
 from parsers import verbose
+from services import DaemonService
 
 
 COMMANDS: dict[str, type[Command]] = {
@@ -61,3 +62,4 @@ def main() -> None:
     if getattr(args, "verbose", False):
         logging.basicConfig(level=logging.DEBUG)
     COMMANDS[args.command](args)
+    DaemonService().start()

@@ -6,6 +6,8 @@ import logging
 
 
 class DatabaseService:
+    DATE_PATTERN: str = r"%Y-%m-%d %H:%M:%S"
+
     def __init__(self) -> None:
         self.create_table()
 
