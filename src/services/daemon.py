@@ -43,6 +43,21 @@ class DaemonService:
             raise ValueError(f"pidfile {self.pidfile} is empty.")
         return int(pid)
 
+    def kill_pid(self, pid: int | None = None) -> None:
+        _pid: int = pid if isinstance(pid, int) else self.pid_from_pidfile()
+        try:
+            while 1:
+                os.kill(_pid, SIGTERM)
+                sleep(0.1)
+        except OSError as error:
+            error_str: str = str(error.args)
+            if error_str.find("No such process") > 0:
+                if self.pidfile_exists:
+                    self.delete_pidfile()
+            else:
+                print(error_str)
+                exit(1)
+
     def _start_fork(self) -> int:
         try:
             pid: int = os.fork()
@@ -84,10 +99,7 @@ class DaemonService:
     def start(self) -> None:
         """Start the daemon."""
         try:
-            pid: int = self.pid_from_pidfile()
-            message: str = f"{pid} already exists. Daemon already running?\n"
-            stderr.write(message)
-            exit(1)
+            self.kill_pid(self.pid_from_pidfile())
         except (FileNotFoundError, ValueError):
             pass
         self.daemonize()
@@ -101,18 +113,7 @@ class DaemonService:
             message: str = "pidfile does not exist. Daemon not running?\n"
             stderr.write(message)
             return
-        try:
-            while 1:
-                os.kill(pid, SIGTERM)
-                sleep(0.1)
-        except OSError as error:
-            error_str: str = str(error.args)
-            if error_str.find("No such process") > 0:
-                if self.pidfile_exists:
-                    self.delete_pidfile()
-            else:
-                print(error_str)
-                exit(1)
+        self.kill_pid(pid)
 
     def restart(self) -> None:
         """Restart the daemon."""
