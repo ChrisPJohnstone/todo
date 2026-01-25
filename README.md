@@ -2,7 +2,10 @@
 
 ## Overview
 
-CLI app to manage todo list written in Python standard library. Uses SQLite as backend database.
+CLI app to manage todo list written in Python standard library.
+- Stores items in a SQLite database
+- All commands will initiate a daemon (overwriting if already exists) which will send system notifications when notifications are due.
+    - Only works for MacOS and Linux, I don't care about Windows
 
 ## Usage
 
