@@ -41,6 +41,12 @@ class DaemonService:
         return self.pidfile.exists()
 
     @property
+    def logfile(self) -> Path:
+        if not hasattr(self, "_logfile"):
+            self._logfile = self.pidfile.parent / "log.txt"
+        return self._logfile
+
+    @property
     def database_client(self) -> DatabaseService:
         return self._database_client
 
@@ -107,8 +113,8 @@ class DaemonService:
         stdout.flush()
         stderr.flush()
         si = open(os.devnull, "r")
-        so = open(os.devnull, "a+")
-        se = open(os.devnull, "a+")
+        so = open(self.logfile, "a+")
+        se = open(self.logfile, "a+")
 
         os.dup2(si.fileno(), stdin.fileno())
         os.dup2(so.fileno(), stdout.fileno())
