@@ -4,6 +4,7 @@ from signal import SIGTERM
 from sys import exit, stderr, stdin, stdout
 from time import sleep
 from typing import Final
+from logging import DEBUG, log
 import os
 
 from .notification import NotificationService
@@ -59,14 +60,10 @@ class DaemonService:
                 exit(1)
 
     def _start_fork(self) -> int:
-        try:
-            pid: int = os.fork()
-            if pid > 0:
-                exit(0)
-            return pid
-        except OSError as error:
-            stderr.write(f"fork #1 failed: {error}\n")
-            exit(1)
+        pid: int = os.fork()
+        if pid > 0:
+            exit(0)
+        return pid
 
     def daemonize(self) -> None:
         """Deamonize class. UNIX double fork mechanism."""
@@ -111,7 +108,7 @@ class DaemonService:
             pid: int = self.pid_from_pidfile()
         except (FileNotFoundError, ValueError):
             message: str = "pidfile does not exist. Daemon not running?\n"
-            stderr.write(message)
+            self._log(DEBUG, message)
             return
         self.kill_pid(pid)
 
@@ -126,3 +123,9 @@ class DaemonService:
         while True:
             sleep(1)
             notifier.send_notification("test")
+
+    def _message(self, message: str) -> str:
+        return f"Daemon: {message}"
+
+    def _log(self, level: int, message: str) -> None:
+        log(level, self._message(message))
