@@ -7,7 +7,7 @@ requires-python = ">=3.13.0"
 
   [[project.authors]]
   name = "Christopher Johnstone"
-  email = "chrispjohnstone97@gmail.com"
+  email = "chrisj97@proton.me"
 
   [project.scripts]
   td = "todo.cli:main"
