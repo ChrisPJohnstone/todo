@@ -62,9 +62,7 @@ get_count_tests: TestSet = {
         "criteria": "WHERE not completed",
         "expected_execute_calls": [
             call(
-                'SELECT COUNT(*) AS "count" '
-                'FROM "todo" '
-                "WHERE not completed",
+                'SELECT COUNT(*) AS "count" FROM "todo" WHERE not completed',
                 {},
             )
         ],

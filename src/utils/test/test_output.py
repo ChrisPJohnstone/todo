@@ -2,7 +2,7 @@ from unittest.mock import PropertyMock, patch
 
 from constants import Alignment
 from test_utils import parametrize, TestSet
-from type_definitions import Cell, Row, Rows
+from type_definitions import Row, Rows
 from utils import TableFormatter
 
 table_formatter_tests: TestSet = {

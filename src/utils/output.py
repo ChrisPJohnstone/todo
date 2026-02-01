@@ -1,5 +1,3 @@
-from argparse import ArgumentParser, Namespace
-
 from .miscellaneous import pad_string
 from .terminal import terminal_width
 from constants import Alignment

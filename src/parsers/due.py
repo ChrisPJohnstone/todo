@@ -1,21 +1,18 @@
 from argparse import ArgumentParser
-from typing import Callable
+
+from .type_definitions import AddArgumentKwargs
 
 
 def due(default: bool = False) -> ArgumentParser:
-    parser: ArgumentParser = ArgumentParser(add_help=False)
-    base: Callable = lambda **kwargs: parser.add_argument(
-        "--due",
-        metavar="due",
-        type=str,
-        required=False,
-        **kwargs,
-    )
+    kwargs: AddArgumentKwargs = {
+        "metavar": "due",
+        "type": str,
+        "required": False,
+        "help": "When the item is due.",
+    }
     if default:
-        base(
-            default="later",
-            help="When the item is due (Default: 1 Hour from now)",
-        )
-    else:
-        base(help="When the item is due (Default: 1 Hour from now)")
+        kwargs["default"] = "later"
+        kwargs["help"] += " Default: 1 hour from now"
+    parser: ArgumentParser = ArgumentParser(add_help=False)
+    parser.add_argument("--due", **kwargs)
     return parser

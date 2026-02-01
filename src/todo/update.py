@@ -25,12 +25,6 @@ class Update(Command):
         if args.due:
             due: datetime | None = DateUtil.parse(args.due)
             fields["due"] = DateUtil.format(due)
-            if args.message:
-                message: str = " ".join(args.message)
-            else:
-                criteria: str = f'WHERE "id" = {args.id[0]}'
-                results: list[tuple] = database.get_list(criteria)
-                message: str = results[1][results[0].index("message")]
         if args.completed:
             fields["completed"] = True
             fields["completed_at"] = DateUtil.format(datetime.now())

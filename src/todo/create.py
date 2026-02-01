@@ -15,7 +15,4 @@ class Create(Command):
     def __init__(self, args: Namespace) -> None:
         database: DatabaseService = DatabaseService()
         due: datetime | None = DateUtil.parse(args.due) if args.due else None
-        item_id: int = database.create(
-            message=" ".join(args.message),
-            due=DateUtil.format(due),
-        )
+        database.create(" ".join(args.message), DateUtil.format(due))

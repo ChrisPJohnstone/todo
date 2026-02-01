@@ -1,7 +1,5 @@
 from abc import ABC, abstractmethod
 from argparse import ArgumentParser, Namespace
-from datetime import datetime
-from os import getenv
 
 
 class Command(ABC):

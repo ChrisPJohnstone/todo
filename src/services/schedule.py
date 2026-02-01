@@ -1,5 +1,4 @@
 from datetime import datetime
-from os import fork
 from time import time
 import sched
 

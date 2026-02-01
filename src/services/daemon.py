@@ -99,7 +99,7 @@ class DaemonService:
     def daemonize(self) -> None:
         """Deamonize class. UNIX double fork mechanism."""
         # First Fork
-        pid: int = self._start_fork()
+        self._start_fork()
 
         # decouple from parent environment
         os.chdir("/")
@@ -107,7 +107,7 @@ class DaemonService:
         os.umask(0)
 
         # Second Fork
-        pid: int = self._start_fork()
+        self._start_fork()
 
         # redirect standard file descriptors
         stdout.flush()
@@ -175,7 +175,7 @@ class DaemonService:
     def next_item(self) -> tuple | None:
         """Get next reminder due date"""
         criteria: str = (
-            "WHERE \"due\" > DATETIME('now') ORDER BY \"due\" ASC LIMIT 1"
+            'WHERE "due" > DATETIME(\'now\') ORDER BY "due" ASC LIMIT 1'
         )
         items: list[tuple] = self.database_client.get_list(criteria)
         if len(items) == 1:
