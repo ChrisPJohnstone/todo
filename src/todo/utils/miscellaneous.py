@@ -1,6 +1,6 @@
 from platform import system
 
-from constants import Alignment, Platform
+from todo.constants import Alignment, Platform
 
 
 def operating_system() -> Platform:

@@ -18,9 +18,9 @@ from todo import (
     Show,
     Update,
 )
-from constants import Commands, HELP_COMMANDS
-from parsers import verbose
-from services import DaemonService
+from todo.constants import Commands, HELP_COMMANDS
+from todo.parsers import verbose
+from todo.services import DaemonService
 
 
 COMMANDS: dict[str, type[Command]] = {

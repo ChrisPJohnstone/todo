@@ -1,6 +1,6 @@
 from argparse import ArgumentParser, Namespace, RawTextHelpFormatter
 
-from services import NotificationService
+from todo.services import NotificationService
 
 
 def main() -> None:

@@ -1,9 +1,9 @@
 from unittest.mock import PropertyMock, patch
 
-from constants import Alignment
 from test_utils import parametrize, TestSet
-from type_definitions import Row, Rows
-from utils import TableFormatter
+from todo.constants import Alignment
+from todo.type_definitions import Row, Rows
+from todo.utils import TableFormatter
 
 table_formatter_tests: TestSet = {
     "basic_table": {

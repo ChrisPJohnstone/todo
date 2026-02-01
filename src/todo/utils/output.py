@@ -1,7 +1,7 @@
 from .miscellaneous import pad_string
 from .terminal import terminal_width
-from constants import Alignment
-from type_definitions import Cell, Row, Rows
+from todo.constants import Alignment
+from todo.type_definitions import Cell, Row, Rows
 
 
 class TableFormatter:

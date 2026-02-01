@@ -4,10 +4,10 @@ from unittest.mock import MagicMock, patch
 
 from pytest import raises
 
+from todo.utils import DateUtil
 from test_utils import parametrize, TestSet
-from utils import DateUtil
 
-FILEPATH: str = "utils.date"
+FILEPATH: str = "todo.utils.date"
 
 
 parse_tests: TestSet = {

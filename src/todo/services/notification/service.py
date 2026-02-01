@@ -2,8 +2,8 @@ from typing import Final
 
 from ._linux import _send_notification_linux
 from ._mac import _send_notification_mac
-from constants import Platform
-from utils import operating_system
+from todo.constants import Platform
+from todo.utils import operating_system
 
 
 class NotificationService:

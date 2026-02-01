@@ -1,9 +1,9 @@
 from argparse import ArgumentParser, Namespace
 
 from ._base import Command
-from parsers import criteria, include_completed
-from services import DatabaseService
-from utils import QueryUtil
+from todo.parsers import criteria, include_completed
+from todo.services import DatabaseService
+from todo.utils import QueryUtil
 
 
 class Count(Command):

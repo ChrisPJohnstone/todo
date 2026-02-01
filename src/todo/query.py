@@ -1,9 +1,9 @@
 from argparse import ArgumentParser, Namespace
 
 from ._base import Command
-from parsers import query
-from services import DatabaseService
-from utils import TableFormatter
+from todo.parsers import query
+from todo.services import DatabaseService
+from todo.utils import TableFormatter
 
 
 class Query(Command):

@@ -1,10 +1,10 @@
 from logging import DEBUG, INFO
 from unittest.mock import _Call, call, patch, MagicMock
 
+from todo.utils import setup_logging
 from test_utils import parametrize, TestSet
-from utils import setup_logging
 
-FILEPATH: str = "utils.logger"
+FILEPATH: str = "todo.utils.logger"
 
 
 setup_logging_tests: TestSet = {
