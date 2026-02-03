@@ -7,32 +7,12 @@ from argparse import (
 from collections.abc import Callable
 import logging
 
-from todo import (
-    Command,
-    Complete,
-    Count,
-    Create,
-    Delete,
-    ListItems,
-    Query,
-    Show,
-    Update,
-)
+from todo.commands import COMMANDS
 from todo.constants import Commands, HELP_COMMANDS
 from todo.parsers import verbose
 from todo.services import DaemonService
 
 
-COMMANDS: dict[str, type[Command]] = {
-    Commands.COMPLETE: Complete,
-    Commands.COUNT: Count,
-    Commands.CREATE: Create,
-    Commands.DELETE: Delete,
-    Commands.LIST: ListItems,
-    Commands.QUERY: Query,
-    Commands.SHOW: Show,
-    Commands.UPDATE: Update,
-}
 SHARED_PARSERS: list[Callable[[], ArgumentParser]] = [verbose]
 
 
@@ -51,15 +31,16 @@ def main() -> None:
         required=True,
     )
     for name, command in COMMANDS.items():
-        subparsers.add_parser(
+        command_parser: ArgumentParser = subparsers.add_parser(
             name=name,
             formatter_class=RawTextHelpFormatter,
-            parents=[*shared, *command.parent_parsers()],
+            parents=[*shared, *command.command_parsers()],
             help=HELP_COMMANDS[Commands(name)],
             description=HELP_COMMANDS[Commands(name)],
         )
+        command_parser.set_defaults(main=command.main)
     args: Namespace = parser.parse_args()
     if getattr(args, "verbose", False):
         logging.basicConfig(level=logging.DEBUG)
-    COMMANDS[args.command](args)
+    args.main(args)
     DaemonService().start()
