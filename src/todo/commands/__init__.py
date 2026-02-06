@@ -6,6 +6,7 @@ from . import (
     list_items,
     query,
     show,
+    tui,
     update,
 )
 from todo.constants import Commands
@@ -20,6 +21,7 @@ COMMANDS: dict[Commands, CommandModule] = {
     Commands.LIST: list_items,
     Commands.QUERY: query,
     Commands.SHOW: show,
+    Commands.TUI: tui,
     Commands.UPDATE: update,
 }
 

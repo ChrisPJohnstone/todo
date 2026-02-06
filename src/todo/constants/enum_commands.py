@@ -9,4 +9,5 @@ class Commands(StrEnum):
     LIST = "ls"
     QUERY = "query"
     SHOW = "show"
+    TUI = "tui"
     UPDATE = "update"
