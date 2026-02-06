@@ -27,12 +27,12 @@ def test_init(mock_connect: MagicMock) -> None:
 get_list_tests: TestSet = {
     "no_criteria": {
         "criteria": "",
-        "expected_execute_calls": [call('SELECT * FROM "todo" ', {})],
+        "expected_execute_calls": [call('SELECT * FROM "todo"\n ', {})],
     },
     "criteria": {
         "criteria": "WHERE not completed",
         "expected_execute_calls": [
-            call('SELECT * FROM "todo" WHERE not completed', {})
+            call('SELECT * FROM "todo"\n WHERE not completed', {})
         ],
     },
 }
@@ -55,14 +55,14 @@ get_count_tests: TestSet = {
     "no_criteria": {
         "criteria": "",
         "expected_execute_calls": [
-            call('SELECT COUNT(*) AS "count" FROM "todo" ', {})
+            call('SELECT COUNT(*) AS "count" FROM "todo"\n ', {})
         ],
     },
     "criteria": {
         "criteria": "WHERE not completed",
         "expected_execute_calls": [
             call(
-                'SELECT COUNT(*) AS "count" FROM "todo" WHERE not completed',
+                'SELECT COUNT(*) AS "count" FROM "todo"\n WHERE not completed',
                 {},
             )
         ],
@@ -89,9 +89,9 @@ create_tests: TestSet = {
         "due": None,
         "expected_execute_calls": [
             call(
-                'INSERT INTO "todo" ("message", "due") '
-                "VALUES (:message, :due) "
-                'RETURNING "id"',
+                'INSERT INTO "todo" ("message", "due")\n'
+                "VALUES (:message, :due)\n"
+                'RETURNING "id"\n',
                 {"message": "Test message", "due": None},
             )
         ],
@@ -101,9 +101,9 @@ create_tests: TestSet = {
         "due": "2021-01-01",
         "expected_execute_calls": [
             call(
-                'INSERT INTO "todo" ("message", "due") '
-                "VALUES (:message, :due) "
-                'RETURNING "id"',
+                'INSERT INTO "todo" ("message", "due")\n'
+                "VALUES (:message, :due)\n"
+                'RETURNING "id"\n',
                 {"message": "do the dishes", "due": "2021-01-01"},
             )
         ],
@@ -131,10 +131,10 @@ update_tests: TestSet = {
         "fields": {"message": "New message"},
         "expected_execute_calls": [
             call(
-                'UPDATE "todo" '
-                'SET "message" = :message '
-                'WHERE "id" = 1234 '
-                'RETURNING "id"',
+                'UPDATE "todo"\n'
+                'SET "message" = :message\n'
+                'WHERE "id" = 1234\n'
+                'RETURNING "id"\n',
                 {"message": "New message"},
             )
         ],
@@ -144,10 +144,10 @@ update_tests: TestSet = {
         "fields": {"due": "2021-01-01"},
         "expected_execute_calls": [
             call(
-                'UPDATE "todo" '
-                'SET "due" = :due '
-                'WHERE "id" = 5678 '
-                'RETURNING "id"',
+                'UPDATE "todo"\n'
+                'SET "due" = :due\n'
+                'WHERE "id" = 5678\n'
+                'RETURNING "id"\n',
                 {"due": "2021-01-01"},
             )
         ],
@@ -157,10 +157,10 @@ update_tests: TestSet = {
         "fields": {"completed": True, "completed_at": "2021-01-01"},
         "expected_execute_calls": [
             call(
-                'UPDATE "todo" '
-                'SET "completed" = :completed, "completed_at" = :completed_at '
-                'WHERE "id" = 9012 '
-                'RETURNING "id"',
+                'UPDATE "todo"\n'
+                'SET "completed" = :completed, "completed_at" = :completed_at\n'
+                'WHERE "id" = 9012\n'
+                'RETURNING "id"\n',
                 {"completed": True, "completed_at": "2021-01-01"},
             )
         ],
@@ -192,13 +192,13 @@ delete_tests: TestSet = {
     "1234": {
         "id": 1234,
         "expected_execute_calls": [
-            call('DELETE FROM "todo" WHERE "id" = 1234 RETURNING "id"', {})
+            call('DELETE FROM "todo"\nWHERE "id" = 1234\nRETURNING "id"\n', {})
         ],
     },
     "5678": {
         "id": 5678,
         "expected_execute_calls": [
-            call('DELETE FROM "todo" WHERE "id" = 5678 RETURNING "id"', {})
+            call('DELETE FROM "todo"\nWHERE "id" = 5678\nRETURNING "id"\n', {})
         ],
     },
 }

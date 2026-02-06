@@ -1,12 +1,12 @@
 from collections.abc import Sequence
 from pathlib import Path
 from sqlite3 import Connection, Cursor, connect
-from typing import Any
+from typing import Any, Final
 import logging
 
 
 class DatabaseService:
-    DATE_PATTERN: str = r"%Y-%m-%d %H:%M:%S"
+    DATE_PATTERN: Final[str] = r"%Y-%m-%d %H:%M:%S"
 
     def __init__(self) -> None:
         self.create_table()
@@ -20,50 +20,53 @@ class DatabaseService:
         return "todo"
 
     @property
+    def ASSET_DIR(self) -> Path:
+        return Path(__file__).parent / "assets"
+
+    @property
     def DDL(self) -> str:
-        return f"""
-        CREATE TABLE IF NOT EXISTS "{self.TABLE_NAME}" (
-            "id"            INTEGER     PRIMARY KEY AUTOINCREMENT,
-            "created_at"    TIMESTAMP   NOT NULL    DEFAULT CURRENT_TIMESTAMP,
-            "message"       TEXT        NOT NULL,
-            "due"           TIMESTAMP   NULL,
-            "completed"     BOOLEAN     NOT NULL    DEFAULT 0,
-            "completed_at"  TIMESTAMP   NULL
-        )
-        """
+        if not hasattr(self, "_DDL"):
+            self._DDL: str = self._get_asset("ddl.sql")
+        return self._DDL
 
     @property
     def LIST_QUERY(self) -> str:
-        return f'SELECT * FROM "{self.TABLE_NAME}"'
+        if not hasattr(self, "_LIST_QUERY"):
+            self._LIST_QUERY: str = self._get_asset("list.sql")
+        return self._LIST_QUERY
 
     @property
     def COUNT_QUERY(self) -> str:
-        return f'SELECT COUNT(*) AS "count" FROM "{self.TABLE_NAME}"'
+        if not hasattr(self, "_COUNT_QUERY"):
+            self._COUNT_QUERY: str = self._get_asset("count.sql")
+        return self._COUNT_QUERY
 
     @property
     def INSERT_QUERY(self) -> str:
-        return (
-            f'INSERT INTO "{self.TABLE_NAME}" ("message", "due") '
-            f"VALUES (:message, :due) "
-            f'RETURNING "id"'
-        )
+        if not hasattr(self, "_INSERT_QUERY"):
+            self._INSERT_QUERY: str = self._get_asset("insert.sql")
+        return self._INSERT_QUERY
 
     @property
     def UPDATE_QUERY(self) -> str:
-        return (
-            f'UPDATE "{self.TABLE_NAME}" '
-            f"SET {{fields}} "
-            f'WHERE "id" = {{id}} '
-            f'RETURNING "id"'
-        )
+        if not hasattr(self, "_UPDATE_QUERY"):
+            self._UPDATE_QUERY: str = self._get_asset("update.sql")
+        return self._UPDATE_QUERY
 
     @property
     def DELETE_QUERY(self) -> str:
-        return (
-            f'DELETE FROM "{self.TABLE_NAME}" '
-            f'WHERE "id" = {{id}} '
-            f'RETURNING "id"'
-        )
+        if not hasattr(self, "_DELETE_QUERY"):
+            self._DELETE_QUERY: str = self._get_asset("delete.sql")
+        return self._DELETE_QUERY
+
+    def _get_asset(self, filename: str) -> str:
+        filepath: Path = self.ASSET_DIR / filename
+        if not filepath.exists():
+            raise FileNotFoundError(f"{filepath} does not exist")
+        if not filepath.is_file():
+            raise IsADirectoryError(f"{filepath} is a directory")
+        template: str = filepath.read_text()
+        return template.format(table_name=self.TABLE_NAME)
 
     def _execute(
         self,
