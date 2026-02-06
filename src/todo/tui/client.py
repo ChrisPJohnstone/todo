@@ -76,6 +76,15 @@ class TUI:
     def current_item(self) -> Item:
         return self.items[self.current_index]
 
+    @property
+    def keep_running(self) -> bool:
+        return self._keep_running
+
+    @keep_running.setter
+    def keep_running(self, value: bool) -> None:
+        self._log(DEBUG, f"Setting keep_running to {value}")
+        self._keep_running: bool = value
+
     @staticmethod
     def _message(message: str) -> str:
         return f"TUI: {message}"
@@ -110,6 +119,18 @@ class TUI:
             else:
                 win.addstr(item_str)
 
+    def handle_input(self, win: window) -> None:
+        key: int = win.getch()
+        if key not in BINDING:
+            return
+        match BINDING[key]:
+            case Action.QUIT:
+                self.keep_running = False
+            case Action.DOWN:
+                self.current_index += 1
+            case Action.UP:
+                self.current_index -= 1
+
     def main(self, stdscr: window) -> None:
         """
         Main Processing Loop For TUI
@@ -117,19 +138,8 @@ class TUI:
         Args:
             stdscr (window): curses window to display on
         """
-        stdscr.clear()
-        self.draw_items(stdscr)
-        while True:
-            key: int = stdscr.getch()
-            if not (action := BINDING.get(key)):
-                continue
-            match action:
-                case Action.QUIT:
-                    break
-                case Action.DOWN:
-                    self.current_index += 1
-                case Action.UP:
-                    self.current_index -= 1
+        self.keep_running = True
+        while self.keep_running:
             stdscr.clear()
             self.draw_items(stdscr)
-            stdscr.refresh()
+            self.handle_input(stdscr)
