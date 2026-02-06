@@ -10,4 +10,4 @@ def command_parsers() -> list[ArgumentParser]:
 
 def main(args: Namespace) -> None:
     database: DatabaseClient = DatabaseClient()
-    TUI(database)
+    TUI(database, args.logger)
