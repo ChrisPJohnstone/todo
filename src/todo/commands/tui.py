@@ -1,5 +1,7 @@
 from argparse import ArgumentParser, Namespace
 
+from todo.database import DatabaseClient
+from todo.tui import TUI
 
 
 def command_parsers() -> list[ArgumentParser]:
@@ -7,4 +9,5 @@ def command_parsers() -> list[ArgumentParser]:
 
 
 def main(args: Namespace) -> None:
-    print(args)
+    database: DatabaseClient = DatabaseClient()
+    TUI(database)
