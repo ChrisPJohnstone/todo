@@ -6,7 +6,7 @@ from todo.constants import Platform
 from todo.utils import operating_system
 
 
-class NotificationService:
+class NotificationClient:
     DEFAULT_APP_NAME: Final[str] = "todo"
     DEFAULT_EXPIRY_TIME: Final[int] = 3
 

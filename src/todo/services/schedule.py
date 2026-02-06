@@ -2,15 +2,15 @@ from datetime import datetime
 from time import time
 import sched
 
-from .notification import NotificationService
+from todo.notification import NotificationClient
 
 
 class ScheduleService:
     def __init__(
         self,
-        notifier: NotificationService | None = None,
+        notifier: NotificationClient | None = None,
     ) -> None:
-        self.notifier = notifier or NotificationService()
+        self.notifier = notifier or NotificationClient()
         self.scheduler = sched.scheduler(time)
 
     @property
@@ -22,12 +22,12 @@ class ScheduleService:
         self._scheduler: sched.scheduler = value
 
     @property
-    def notifier(self) -> NotificationService:
+    def notifier(self) -> NotificationClient:
         return self._notifier
 
     @notifier.setter
-    def notifier(self, value: NotificationService) -> None:
-        self._notifier: NotificationService = value
+    def notifier(self, value: NotificationClient) -> None:
+        self._notifier: NotificationClient = value
 
     def clear(self) -> None:
         """Clear all events from scheduler"""
