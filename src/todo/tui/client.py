@@ -1,4 +1,4 @@
-from curses import window, wrapper
+from curses import A_REVERSE, window, wrapper
 from logging import DEBUG, Logger, getLogger
 
 from todo.database import DatabaseClient
@@ -44,18 +44,43 @@ class TUI:
         self._log(DEBUG, f"Setting items to {value}")
         self._items: list[Item] = value
 
+    @property
+    def n_items(self) -> int:
+        return len(self.items)
+
+    @property
+    def max_index(self) -> int:
+        return self.n_items - 1
+
+    @property
+    def max_id(self) -> int:
+        return max([item.id for item in self.items])
+
+    @property
+    def max_id_len(self) -> int:
+        return len(str(self.max_id))
+
+    @property
+    def current_index(self) -> int:
+        return self._current_index
+
+    @current_index.setter
+    def current_index(self, value: int) -> None:
+        self._log(DEBUG, f"Setting current index to {value}")
+        if value < 0 or value > self.max_index:
+            value = value % self.n_items
+        self._current_index: int = value
+
+    @property
+    def current_item(self) -> Item:
+        return self.items[self.current_index]
+
     @staticmethod
     def _message(message: str) -> str:
         return f"TUI: {message}"
 
     def _log(self, level: int, message: str) -> None:
         self._logger.log(level, self._message(message))
-
-    def max_id(self) -> int:
-        return max([item.id for item in self.items])
-
-    def id_width(self) -> int:
-        return len(str(self.max_id()))
 
     def max_width(self) -> int:
         # TODO: Handle resize
@@ -66,18 +91,23 @@ class TUI:
         self.items: list[Item] = []
         for item in self.database_client.get_list()[1:]:
             self.items.append(Item(*item))
+        self.current_index = 0
 
     def draw_items(self, win: window) -> None:
         win.addstr("Press q to quit\n")
         divider: str = ": "
-        id_width: int = self.id_width()
+        id_width: int = self.max_id_len
         max_message_width: int = self.max_width() - id_width - len(divider)
-        for item in self.items:
+        for index, item in enumerate(self.items):
             if len(item.message) >= max_message_width:
                 message_str: str = f"{item.message[: max_message_width - 3]}..."
             else:
                 message_str: str = item.message
-            win.addstr(f"{item.id:>0{id_width}}{divider}{message_str}\n")
+            item_str: str = f"{item.id:>0{id_width}}{divider}{message_str}\n"
+            if index == self.current_index:
+                win.addstr(item_str, A_REVERSE)
+            else:
+                win.addstr(item_str)
 
     def main(self, stdscr: window) -> None:
         """
@@ -92,6 +122,10 @@ class TUI:
             match stdscr.getkey():
                 case "q":
                     break
+                case "j":
+                    self.current_index += 1
+                case "k":
+                    self.current_index -= 1
                 case _:
                     continue
             stdscr.clear()
