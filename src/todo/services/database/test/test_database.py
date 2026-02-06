@@ -6,7 +6,7 @@ from pytest import raises
 from test_utils import parametrize, TestSet
 from todo.services import DatabaseService
 
-FILEPATH: str = "todo.services.database"
+FILEPATH: str = "todo.services.database.service"
 
 
 def _mock_execute(mock_connect: MagicMock) -> MagicMock:
