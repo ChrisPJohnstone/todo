@@ -8,22 +8,22 @@ from typing import Final
 from logging import DEBUG, log
 import os
 
-from .schedule import ScheduleService
+from .scheduler import Scheduler
 from todo.database import DatabaseClient
 
 
-class DaemonService:
+class Daemon:
     DEFAULT_PIDFILE: Final[Path] = Path("/tmp/todo/todo.pid")
 
     def __init__(
         self,
         pidfile: Path = DEFAULT_PIDFILE,
         database_client: DatabaseClient | None = None,
-        scheduler: ScheduleService | None = None,
+        scheduler: Scheduler | None = None,
     ) -> None:
         self.pidfile = pidfile
         self.database_client = database_client or DatabaseClient()
-        self.scheduler = scheduler or ScheduleService()
+        self.scheduler = scheduler or Scheduler()
 
     @property
     def pidfile(self) -> Path:
@@ -55,12 +55,12 @@ class DaemonService:
         self._database_client: DatabaseClient = value
 
     @property
-    def scheduler(self) -> ScheduleService:
+    def scheduler(self) -> Scheduler:
         return self._scheduler
 
     @scheduler.setter
-    def scheduler(self, value: ScheduleService) -> None:
-        self._scheduler: ScheduleService = value
+    def scheduler(self, value: Scheduler) -> None:
+        self._scheduler: Scheduler = value
 
     def delete_pidfile(self) -> None:
         """Deleted pidfile"""

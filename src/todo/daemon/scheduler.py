@@ -5,7 +5,7 @@ import sched
 from todo.notification import NotificationClient
 
 
-class ScheduleService:
+class Scheduler:
     def __init__(
         self,
         notifier: NotificationClient | None = None,

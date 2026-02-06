@@ -9,8 +9,8 @@ import logging
 
 from todo.commands import COMMANDS
 from todo.constants import Commands, HELP_COMMANDS
+from todo.daemon import Daemon
 from todo.parsers import verbose
-from todo.services import DaemonService
 
 
 SHARED_PARSERS: list[Callable[[], ArgumentParser]] = [verbose]
@@ -43,4 +43,4 @@ def main() -> None:
     if getattr(args, "verbose", False):
         logging.basicConfig(level=logging.DEBUG)
     args.main(args)
-    DaemonService().start()
+    Daemon().start()
