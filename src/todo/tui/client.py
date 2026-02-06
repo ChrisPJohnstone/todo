@@ -12,6 +12,7 @@ class TUI:
     ) -> None:
         self._logger = logger
         self.database_client: DatabaseClient = database_client
+        self._refresh_items()
         wrapper(self.main)
 
     @property
@@ -32,6 +33,15 @@ class TUI:
     def database_client(self, value: DatabaseClient) -> None:
         self._database_client: DatabaseClient = value
 
+    @property
+    def items(self) -> list[tuple]:
+        return self._items
+
+    @items.setter
+    def items(self, value: list[tuple]) -> None:
+        self._log(DEBUG, f"Setting items to {value}")
+        self._items: list[tuple] = value
+
     @staticmethod
     def _message(message: str) -> str:
         return f"TUI: {message}"
@@ -39,8 +49,15 @@ class TUI:
     def _log(self, level: int, message: str) -> None:
         self._logger.log(level, self._message(message))
 
+    def _refresh_items(self) -> None:
+        self._log(DEBUG, "Refreshing items")
+        self.items = self.database_client.get_list()
+
     def _draw_screen(self, win: window) -> None:
-        win.addstr("Press q to quit")
+        win.addstr("Press q to quit\n")
+        for item in self.items:
+            row: str = " ".join([str(cell) for cell in item])
+            win.addstr(f"{row}\n")
 
     def main(self, stdscr: window) -> None:
         """
@@ -49,10 +66,14 @@ class TUI:
         Args:
             stdscr (window): curses window to display on
         """
+        stdscr.clear()
+        self._draw_screen(stdscr)
         while True:
-            stdscr.clear()
-            self._draw_screen(stdscr)
             match stdscr.getkey():
                 case "q":
                     break
+                case _:
+                    continue
+            stdscr.clear()
+            self._draw_screen(stdscr)
             stdscr.refresh()
