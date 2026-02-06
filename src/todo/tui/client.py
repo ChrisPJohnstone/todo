@@ -3,6 +3,7 @@ from logging import DEBUG, Logger, getLogger
 
 from todo.database import DatabaseClient
 from todo.utils import terminal_width
+from .constants import Action, BINDING
 from .item import Item
 
 
@@ -119,15 +120,16 @@ class TUI:
         stdscr.clear()
         self.draw_items(stdscr)
         while True:
-            match stdscr.getkey():
-                case "q":
+            key: int = stdscr.getch()
+            if not (action := BINDING.get(key)):
+                continue
+            match action:
+                case Action.QUIT:
                     break
-                case "j":
+                case Action.DOWN:
                     self.current_index += 1
-                case "k":
+                case Action.UP:
                     self.current_index -= 1
-                case _:
-                    continue
             stdscr.clear()
             self.draw_items(stdscr)
             stdscr.refresh()
