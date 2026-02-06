@@ -2,7 +2,7 @@ from curses import A_REVERSE, window, wrapper
 from logging import DEBUG, Logger, getLogger
 
 from todo.database import DatabaseClient
-from todo.utils import terminal_width
+from todo.utils import terminal_height, terminal_width
 from .constants import Action, BINDING
 from .item import Item
 
@@ -62,19 +62,35 @@ class TUI:
         return len(str(self.max_id))
 
     @property
-    def current_index(self) -> int:
+    def index_current(self) -> int:
         return self._current_index
 
-    @current_index.setter
-    def current_index(self, value: int) -> None:
+    @index_current.setter
+    def index_current(self, value: int) -> None:
         self._log(DEBUG, f"Setting current index to {value}")
+        if not hasattr(self, "_index_page_start"):
+            self.index_page_start = 0
         if value < 0 or value > self.max_index:
             value = value % self.n_items
+            self.index_page_start = min(value, self.n_items - self.max_height())
+        if value < self.index_page_start:
+            self.index_page_start -= 1
+        if value > self.index_page_end - 1:
+            self.index_page_start += 1
         self._current_index: int = value
 
     @property
-    def current_item(self) -> Item:
-        return self.items[self.current_index]
+    def index_page_start(self) -> int:
+        return self._index_page_start
+
+    @index_page_start.setter
+    def index_page_start(self, value: int) -> None:
+        self._log(DEBUG, f"Setting index_page_start to {value}")
+        self._index_page_start: int = value
+
+    @property
+    def index_page_end(self) -> int:
+        return self.index_page_start + min(self.n_items, self.max_height())
 
     @property
     def keep_running(self) -> bool:
@@ -92,6 +108,10 @@ class TUI:
     def _log(self, level: int, message: str) -> None:
         self._logger.log(level, self._message(message))
 
+    def max_height(self) -> int:
+        # TODO: Handle resize
+        return terminal_height()
+
     def max_width(self) -> int:
         # TODO: Handle resize
         return terminal_width() - 1
@@ -101,23 +121,26 @@ class TUI:
         self.items: list[Item] = []
         for item in self.database_client.get_list()[1:]:
             self.items.append(Item(*item))
-        self.current_index = 0
+        self.index_current = 0
 
     def draw_items(self, win: window) -> None:
-        win.addstr("Press q to quit\n")
+        self._log(DEBUG, "test")
         divider: str = ": "
         id_width: int = self.max_id_len
         max_message_width: int = self.max_width() - id_width - len(divider)
-        for index, item in enumerate(self.items):
+        line: int = 0
+        for index in range(self.index_page_start, self.index_page_end):
+            item: Item = self.items[index]
             if len(item.message) >= max_message_width:
                 message_str: str = f"{item.message[: max_message_width - 3]}..."
             else:
                 message_str: str = item.message
-            item_str: str = f"{item.id:>0{id_width}}{divider}{message_str}\n"
-            if index == self.current_index:
-                win.addstr(item_str, A_REVERSE)
+            item_str: str = f"{item.id:>0{id_width}}{divider}{message_str}"
+            if index == self.index_current:
+                win.addstr(line, 0, item_str, A_REVERSE)
             else:
-                win.addstr(item_str)
+                win.addstr(line, 0, item_str)
+            line += 1
 
     def handle_input(self, win: window) -> None:
         key: int = win.getch()
@@ -127,9 +150,9 @@ class TUI:
             case Action.QUIT:
                 self.keep_running = False
             case Action.DOWN:
-                self.current_index += 1
+                self.index_current += 1
             case Action.UP:
-                self.current_index -= 1
+                self.index_current -= 1
 
     def main(self, stdscr: window) -> None:
         """
