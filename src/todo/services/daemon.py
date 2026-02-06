@@ -8,8 +8,8 @@ from typing import Final
 from logging import DEBUG, log
 import os
 
-from .database import DatabaseService
 from .schedule import ScheduleService
+from todo.database import DatabaseClient
 
 
 class DaemonService:
@@ -18,11 +18,11 @@ class DaemonService:
     def __init__(
         self,
         pidfile: Path = DEFAULT_PIDFILE,
-        database_client: DatabaseService | None = None,
+        database_client: DatabaseClient | None = None,
         scheduler: ScheduleService | None = None,
     ) -> None:
         self.pidfile = pidfile
-        self.database_client = database_client or DatabaseService()
+        self.database_client = database_client or DatabaseClient()
         self.scheduler = scheduler or ScheduleService()
 
     @property
@@ -47,12 +47,12 @@ class DaemonService:
         return self._logfile
 
     @property
-    def database_client(self) -> DatabaseService:
+    def database_client(self) -> DatabaseClient:
         return self._database_client
 
     @database_client.setter
-    def database_client(self, value: DatabaseService) -> None:
-        self._database_client: DatabaseService = value
+    def database_client(self, value: DatabaseClient) -> None:
+        self._database_client: DatabaseClient = value
 
     @property
     def scheduler(self) -> ScheduleService:

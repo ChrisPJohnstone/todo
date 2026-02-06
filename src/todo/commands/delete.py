@@ -1,7 +1,7 @@
 from argparse import ArgumentParser, Namespace
 
 from todo.parsers import item_id
-from todo.services import DatabaseService
+from todo.database import DatabaseClient
 
 
 def command_parsers() -> list[ArgumentParser]:
@@ -9,7 +9,7 @@ def command_parsers() -> list[ArgumentParser]:
 
 
 def main(args: Namespace) -> None:
-    database: DatabaseService = DatabaseService()
+    database: DatabaseClient = DatabaseClient()
     results: list[tuple] = database.delete(args.id[0])
     if len(results) <= 1:
         print("No items deleted")

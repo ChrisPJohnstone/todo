@@ -2,7 +2,7 @@ from argparse import ArgumentParser, Namespace
 from datetime import datetime
 
 from todo.parsers import completed, due, item_id, message
-from todo.services import DatabaseService
+from todo.database import DatabaseClient
 from todo.utils import DateUtil
 
 
@@ -16,7 +16,7 @@ def command_parsers() -> list[ArgumentParser]:
 
 
 def main(args: Namespace) -> None:
-    database: DatabaseService = DatabaseService()
+    database: DatabaseClient = DatabaseClient()
     fields: dict[str, str | bool | None] = {}
     print("test")
     quit()

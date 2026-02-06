@@ -4,9 +4,9 @@ from unittest.mock import _Call, call, patch, MagicMock
 from pytest import raises
 
 from test_utils import parametrize, TestSet
-from todo.services import DatabaseService
+from todo.database import DatabaseClient
 
-FILEPATH: str = "todo.services.database.service"
+FILEPATH: str = "todo.database.client"
 
 
 def _mock_execute(mock_connect: MagicMock) -> MagicMock:
@@ -20,8 +20,8 @@ def _mock_execute(mock_connect: MagicMock) -> MagicMock:
 @patch(f"{FILEPATH}.connect")
 def test_init(mock_connect: MagicMock) -> None:
     mock_execute: MagicMock = _mock_execute(mock_connect)
-    service: DatabaseService = DatabaseService()
-    mock_execute.assert_called_once_with(service.DDL, {})
+    client: DatabaseClient = DatabaseClient()
+    mock_execute.assert_called_once_with(client.DDL, {})
 
 
 get_list_tests: TestSet = {
@@ -38,7 +38,7 @@ get_list_tests: TestSet = {
 }
 
 
-@patch.object(DatabaseService, "__init__", new=MagicMock(return_value=None))
+@patch.object(DatabaseClient, "__init__", new=MagicMock(return_value=None))
 @patch(f"{FILEPATH}.connect")
 @parametrize(get_list_tests)
 def test_get_list(
@@ -47,7 +47,7 @@ def test_get_list(
     expected_execute_calls: list[_Call],
 ) -> None:
     mock_execute: MagicMock = _mock_execute(mock_connect)
-    DatabaseService().get_list(criteria)
+    DatabaseClient().get_list(criteria)
     mock_execute.assert_has_calls(expected_execute_calls)
 
 
@@ -70,7 +70,7 @@ get_count_tests: TestSet = {
 }
 
 
-@patch.object(DatabaseService, "__init__", new=MagicMock(return_value=None))
+@patch.object(DatabaseClient, "__init__", new=MagicMock(return_value=None))
 @patch(f"{FILEPATH}.connect")
 @parametrize(get_count_tests)
 def test_get_count(
@@ -79,7 +79,7 @@ def test_get_count(
     expected_execute_calls: list[_Call],
 ) -> None:
     mock_execute: MagicMock = _mock_execute(mock_connect)
-    DatabaseService().get_count(criteria)
+    DatabaseClient().get_count(criteria)
     mock_execute.assert_has_calls(expected_execute_calls)
 
 
@@ -111,7 +111,7 @@ create_tests: TestSet = {
 }
 
 
-@patch.object(DatabaseService, "__init__", new=MagicMock(return_value=None))
+@patch.object(DatabaseClient, "__init__", new=MagicMock(return_value=None))
 @patch(f"{FILEPATH}.connect")
 @parametrize(create_tests)
 def test_create(
@@ -121,7 +121,7 @@ def test_create(
     expected_execute_calls: list[_Call],
 ) -> None:
     mock_execute: MagicMock = _mock_execute(mock_connect)
-    DatabaseService().create(message, due)
+    DatabaseClient().create(message, due)
     mock_execute.assert_has_calls(expected_execute_calls)
 
 
@@ -168,7 +168,7 @@ update_tests: TestSet = {
 }
 
 
-@patch.object(DatabaseService, "__init__", new=MagicMock(return_value=None))
+@patch.object(DatabaseClient, "__init__", new=MagicMock(return_value=None))
 @patch(f"{FILEPATH}.connect")
 @parametrize(update_tests)
 def test_update(
@@ -178,14 +178,14 @@ def test_update(
     expected_execute_calls: list[_Call],
 ) -> None:
     mock_execute: MagicMock = _mock_execute(mock_connect)
-    DatabaseService().update(id, fields)
+    DatabaseClient().update(id, fields)
     mock_execute.assert_has_calls(expected_execute_calls)
 
 
-@patch.object(DatabaseService, "__init__", new=MagicMock(return_value=None))
+@patch.object(DatabaseClient, "__init__", new=MagicMock(return_value=None))
 def test_update_no_fields() -> None:
     with raises(ValueError, match="No fields to update"):
-        DatabaseService().update(1234, {})
+        DatabaseClient().update(1234, {})
 
 
 delete_tests: TestSet = {
@@ -204,7 +204,7 @@ delete_tests: TestSet = {
 }
 
 
-@patch.object(DatabaseService, "__init__", new=MagicMock(return_value=None))
+@patch.object(DatabaseClient, "__init__", new=MagicMock(return_value=None))
 @patch(f"{FILEPATH}.connect")
 @parametrize(delete_tests)
 def test_delete(
@@ -213,5 +213,5 @@ def test_delete(
     expected_execute_calls: list[_Call],
 ) -> None:
     mock_execute: MagicMock = _mock_execute(mock_connect)
-    DatabaseService().delete(id)
+    DatabaseClient().delete(id)
     mock_execute.assert_has_calls(expected_execute_calls)

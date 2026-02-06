@@ -5,7 +5,7 @@ from typing import Any, Final
 import logging
 
 
-class DatabaseService:
+class DatabaseClient:
     DATE_PATTERN: Final[str] = r"%Y-%m-%d %H:%M:%S"
 
     def __init__(self) -> None:

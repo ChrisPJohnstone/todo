@@ -1,7 +1,7 @@
 from argparse import ArgumentParser, Namespace
 
 from todo.parsers import criteria, include_completed
-from todo.services import DatabaseService
+from todo.database import DatabaseClient
 from todo.utils import TableFormatter, QueryUtil
 
 
@@ -10,7 +10,7 @@ def command_parsers() -> list[ArgumentParser]:
 
 
 def main(args: Namespace) -> None:
-    database: DatabaseService = DatabaseService()
+    database: DatabaseClient = DatabaseClient()
     criteria: str = QueryUtil.parse_criteria(
         criteria=args.criteria,
         include_completed=args.include_completed,
