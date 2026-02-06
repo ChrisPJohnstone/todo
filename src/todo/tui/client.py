@@ -39,6 +39,9 @@ class TUI:
     def _log(self, level: int, message: str) -> None:
         self._logger.log(level, self._message(message))
 
+    def _draw_screen(self, win: window) -> None:
+        win.addstr("Press q to quit")
+
     def main(self, stdscr: window) -> None:
         """
         Main Processing Loop For TUI
@@ -46,4 +49,10 @@ class TUI:
         Args:
             stdscr (window): curses window to display on
         """
-        pass
+        while True:
+            stdscr.clear()
+            self._draw_screen(stdscr)
+            match stdscr.getkey():
+                case "q":
+                    break
+            stdscr.refresh()
