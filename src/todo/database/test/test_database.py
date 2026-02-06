@@ -38,6 +38,7 @@ get_list_tests: TestSet = {
 }
 
 
+@patch.object(DatabaseClient, "_logger", new=MagicMock())
 @patch.object(DatabaseClient, "__init__", new=MagicMock(return_value=None))
 @patch(f"{FILEPATH}.connect")
 @parametrize(get_list_tests)
@@ -70,6 +71,7 @@ get_count_tests: TestSet = {
 }
 
 
+@patch.object(DatabaseClient, "_logger", new=MagicMock())
 @patch.object(DatabaseClient, "__init__", new=MagicMock(return_value=None))
 @patch(f"{FILEPATH}.connect")
 @parametrize(get_count_tests)
@@ -111,6 +113,7 @@ create_tests: TestSet = {
 }
 
 
+@patch.object(DatabaseClient, "_logger", new=MagicMock())
 @patch.object(DatabaseClient, "__init__", new=MagicMock(return_value=None))
 @patch(f"{FILEPATH}.connect")
 @parametrize(create_tests)
@@ -168,6 +171,7 @@ update_tests: TestSet = {
 }
 
 
+@patch.object(DatabaseClient, "_logger", new=MagicMock())
 @patch.object(DatabaseClient, "__init__", new=MagicMock(return_value=None))
 @patch(f"{FILEPATH}.connect")
 @parametrize(update_tests)
@@ -182,6 +186,7 @@ def test_update(
     mock_execute.assert_has_calls(expected_execute_calls)
 
 
+@patch.object(DatabaseClient, "_logger", new=MagicMock())
 @patch.object(DatabaseClient, "__init__", new=MagicMock(return_value=None))
 def test_update_no_fields() -> None:
     with raises(ValueError, match="No fields to update"):
@@ -204,6 +209,7 @@ delete_tests: TestSet = {
 }
 
 
+@patch.object(DatabaseClient, "_logger", new=MagicMock())
 @patch.object(DatabaseClient, "__init__", new=MagicMock(return_value=None))
 @patch(f"{FILEPATH}.connect")
 @parametrize(delete_tests)

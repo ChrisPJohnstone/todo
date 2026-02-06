@@ -9,7 +9,7 @@ def command_parsers() -> list[ArgumentParser]:
 
 
 def main(args: Namespace) -> None:
-    database: DatabaseClient = DatabaseClient()
+    database: DatabaseClient = DatabaseClient(logger=args.logger)
     results: list[tuple] = database.delete(args.id[0])
     if len(results) <= 1:
         print("No items deleted")

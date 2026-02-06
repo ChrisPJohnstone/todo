@@ -16,7 +16,7 @@ def command_parsers() -> list[ArgumentParser]:
 
 
 def main(args: Namespace) -> None:
-    database: DatabaseClient = DatabaseClient()
+    database: DatabaseClient = DatabaseClient(logger=args.logger)
     fields: dict[str, str | bool | None] = {}
     print("test")
     quit()

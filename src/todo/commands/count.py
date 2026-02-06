@@ -10,7 +10,7 @@ def command_parsers() -> list[ArgumentParser]:
 
 
 def main(args: Namespace) -> None:
-    database: DatabaseClient = DatabaseClient()
+    database: DatabaseClient = DatabaseClient(logger=args.logger)
     parsed_criteria: str = QueryUtil.parse_criteria(
         criteria=args.criteria,
         include_completed=args.include_completed,

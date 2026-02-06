@@ -11,6 +11,6 @@ def command_parsers() -> list[ArgumentParser]:
 
 
 def main(args: Namespace) -> None:
-    database: DatabaseClient = DatabaseClient()
+    database: DatabaseClient = DatabaseClient(logger=args.logger)
     due: datetime | None = DateUtil.parse(args.due) if args.due else None
     database.create(" ".join(args.message), DateUtil.format(due))

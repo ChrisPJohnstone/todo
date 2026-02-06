@@ -1,11 +1,11 @@
 from atexit import register
 from datetime import datetime
+from logging import DEBUG, Logger, getLogger
 from pathlib import Path
 from signal import SIGTERM
 from sys import exit, stderr, stdin, stdout
 from time import sleep
 from typing import Final
-from logging import DEBUG, log
 import os
 
 from .scheduler import Scheduler
@@ -20,7 +20,9 @@ class Daemon:
         pidfile: Path = DEFAULT_PIDFILE,
         database_client: DatabaseClient | None = None,
         scheduler: Scheduler | None = None,
+        logger: Logger = getLogger(__name__),
     ) -> None:
+        self._logger: Logger = logger
         self.pidfile = pidfile
         self.database_client = database_client or DatabaseClient()
         self.scheduler = scheduler or Scheduler()
@@ -182,8 +184,9 @@ class Daemon:
             return
         return items[1]
 
-    def _message(self, message: str) -> str:
+    @staticmethod
+    def _message(message: str) -> str:
         return f"Daemon: {message}"
 
     def _log(self, level: int, message: str) -> None:
-        log(level, self._message(message))
+        self._logger.log(level, self._message(message))

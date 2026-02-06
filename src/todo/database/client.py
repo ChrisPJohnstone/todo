@@ -1,14 +1,15 @@
 from collections.abc import Sequence
+from logging import DEBUG, Logger, getLogger
 from pathlib import Path
 from sqlite3 import Connection, Cursor, connect
 from typing import Any, Final
-import logging
 
 
 class DatabaseClient:
     DATE_PATTERN: Final[str] = r"%Y-%m-%d %H:%M:%S"
 
-    def __init__(self) -> None:
+    def __init__(self, logger: Logger = getLogger(__name__)) -> None:
+        self._logger: Logger = logger
         self.create_table()
 
     @property
@@ -59,6 +60,21 @@ class DatabaseClient:
             self._DELETE_QUERY: str = self._get_asset("delete.sql")
         return self._DELETE_QUERY
 
+    @property
+    def _logger(self) -> Logger:
+        return self.__logger
+
+    @_logger.setter
+    def _logger(self, value: Logger) -> None:
+        self.__logger: Logger = value
+
+    @staticmethod
+    def _message(message: str) -> str:
+        return f"DatabaseClient: {message}"
+
+    def _log(self, level: int, message: str) -> None:
+        self._logger.log(level, self._message(message))
+
     def _get_asset(self, filename: str) -> str:
         filepath: Path = self.ASSET_DIR / filename
         if not filepath.exists():
@@ -91,7 +107,7 @@ class DatabaseClient:
         query: str,
         params: dict[str, Any] | Sequence[Any] | None = None,
     ) -> list[tuple]:
-        logging.debug(f"Executing {query} with {params}")
+        self._log(DEBUG, f"Executing {query} with {params}")
         with connect(self.DATABASE) as connection:
             return self._execute(connection, query, params)
 

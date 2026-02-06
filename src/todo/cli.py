@@ -5,7 +5,7 @@ from argparse import (
     _SubParsersAction,
 )
 from collections.abc import Callable
-import logging
+from logging import DEBUG, basicConfig, getLogger
 
 from todo.commands import COMMANDS
 from todo.constants import Commands, HELP_COMMANDS
@@ -40,7 +40,9 @@ def main() -> None:
         )
         command_parser.set_defaults(main=command.main)
     args: Namespace = parser.parse_args()
+    basicConfig()
+    args.logger = getLogger(__name__)
     if getattr(args, "verbose", False):
-        logging.basicConfig(level=logging.DEBUG)
+        args.logger.setLevel(level=DEBUG)
     args.main(args)
-    Daemon().start()
+    Daemon(logger=args.logger).start()
