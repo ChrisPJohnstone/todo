@@ -104,6 +104,7 @@ class TUI:
 
     def handle_input(self) -> None:
         key: int = self.active_window.getch()
+        self._log(DEBUG, f"Key {key} pressed")
         if key not in self.active_window.BINDINGS:
             return
         action: Action = self.active_window.BINDINGS[key]
@@ -128,6 +129,5 @@ class TUI:
         self.windows = [win_items]
         stdscr.refresh()
         while self.windows:
-            stdscr.clear()
             self.active_window.draw()
             self.handle_input()

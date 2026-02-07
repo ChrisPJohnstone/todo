@@ -1,6 +1,7 @@
 from curses import (
     KEY_DOWN,
     KEY_END,
+    KEY_ENTER,
     KEY_HOME,
     KEY_LEFT,
     KEY_NPAGE,
@@ -100,3 +101,4 @@ class Key(IntEnum):
     U_X = ord("X")
     U_Y = ord("Y")
     U_Z = ord("Z")
+    ENTER = KEY_ENTER

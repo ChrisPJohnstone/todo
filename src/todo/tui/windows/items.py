@@ -1,10 +1,11 @@
 from curses import A_REVERSE
 from logging import DEBUG, Logger, getLogger
 
-from ._base import WinBase
 from ..constants import Action, Key
 from ..item import Item
 from ..type_definitions import Bindings
+from ._base import WinBase
+from .item import WinItem
 
 
 class WinItems(WinBase):
@@ -20,12 +21,12 @@ class WinItems(WinBase):
         logger: Logger = getLogger(__name__),
     ) -> None:
         super().__init__(
+            x_strt=x_strt,
+            y_strt=y_strt,
             x_max=x_max,
             y_max=y_max,
             x_len_max=x_len_max,
             y_len_max=y_len_max,
-            x_strt=x_strt,
-            y_strt=y_strt,
             logger=logger,
         )
         self.items = items
@@ -35,15 +36,18 @@ class WinItems(WinBase):
         return {
             Key.ARROW_DOWN: Action.DOWN,
             Key.ARROW_UP: Action.UP,
+            Key.CTRL_M: Action.ENTER,
+            Key.CTRL_J: Action.ENTER,
             Key.END: Action.GOTO_END,
+            Key.ENTER: Action.ENTER,
             Key.HOME: Action.GOTO_TOP,
+            Key.L_D: Action.JUMP_DOWN,
             Key.L_G: Action.GOTO_TOP,
             Key.L_J: Action.DOWN,
             Key.L_K: Action.UP,
             Key.L_Q: Action.QUIT,
-            Key.U_G: Action.GOTO_END,
-            Key.L_D: Action.JUMP_DOWN,
             Key.L_U: Action.JUMP_UP,
+            Key.U_G: Action.GOTO_END,
         }
 
     @property
@@ -133,14 +137,13 @@ class WinItems(WinBase):
                 self._win.addstr(line, 0, item_str)
             line += 1
         self._win.refresh(
-            0,              # pminrow
-            0,              # pmincol
-            self.y_strt,    # sminrow
-            self.x_strt,    # smincol
-            self.y_stop - 1,    # smaxrow
-            self.x_stop,    # smaxcol
+            0,  # pminrow
+            0,  # pmincol
+            self.y_strt,  # sminrow
+            self.x_strt,  # smincol
+            self.y_stop - 1,  # smaxrow
+            self.x_stop,  # smaxcol
         )
-        # TODO: Fix stops
 
     def action(self, action: Action, windows: list[WinBase]) -> None:
         match action:
@@ -160,3 +163,15 @@ class WinItems(WinBase):
             case Action.JUMP_UP:
                 new: int = self.index_current - (self.y_len_max // 2)
                 self.index_current = max(new, 0)
+            case Action.ENTER:
+                win_item: WinItem = WinItem(
+                    x_strt=self.x_len_max // 2,
+                    y_strt=self.y_strt,
+                    x_max=self.x_max,
+                    y_max=self.y_max,
+                    x_len_max=self.x_len_max,
+                    y_len_max=self.y_len_max,
+                    item=self.items[self.index_current],
+                    logger=self._logger,
+                )
+                windows.insert(0, win_item)
