@@ -124,8 +124,6 @@ class WinItems(WinBase):
 
     def action(self, action: Action) -> None:
         match action:
-            case Action.QUIT:
-                self.keep_running = False
             case Action.DOWN:
                 self.index_current += 1
             case Action.UP:

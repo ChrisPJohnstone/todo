@@ -67,6 +67,15 @@ class TUI:
         self._max_height: int = value
 
     @property
+    def keep_running(self) -> bool:
+        return self._keep_running
+
+    @keep_running.setter
+    def keep_running(self, value: bool) -> None:
+        self._log(DEBUG, f"Setting keep_running to {value}")
+        self._keep_running: bool = value
+
+    @property
     def active_window(self) -> WinBase:
         return self._active_window
 
@@ -98,11 +107,14 @@ class TUI:
         for item in self.database_client.get_list()[1:]:
             self.items.append(Item(*item))
 
-    def handle_input(self, win: window) -> None:
-        key: int = win.getch()
+    def handle_input(self) -> None:
+        key: int = self.active_window.getch()
         if key not in self.active_window.BINDINGS:
             return
         action: Action = self.active_window.BINDINGS[key]
+        if action is Action.QUIT:
+            self.keep_running = False
+            # TODO: Handle nesting quits
         self.active_window.action(action)
 
     def main(self, stdscr: window) -> None:
@@ -120,8 +132,10 @@ class TUI:
             logger=self._logger,
         )
         self.active_window = win_items
+        # TODO: Handle stack
         stdscr.refresh()
-        while self.active_window.keep_running:
+        self.keep_running = True
+        while self.keep_running:
             stdscr.clear()
             self.active_window.draw()
-            self.handle_input(stdscr)
+            self.handle_input()

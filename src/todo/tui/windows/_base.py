@@ -19,7 +19,6 @@ class WinBase(ABC):
         # TODO: Fix hardcoded
         self.width = width
         self.height = height
-        self.keep_running = True
 
     @property
     @abstractmethod
@@ -61,15 +60,6 @@ class WinBase(ABC):
         self._log(DEBUG, f"Setting height to {value}")
         self._height: int = value
 
-    @property
-    def keep_running(self) -> bool:
-        return self._keep_running
-
-    @keep_running.setter
-    def keep_running(self, value: bool) -> None:
-        self._log(DEBUG, f"Setting keep_running to {value}")
-        self._keep_running: bool = value
-
     @staticmethod
     @abstractmethod
     def _message(message: str) -> str:
@@ -86,12 +76,9 @@ class WinBase(ABC):
         self._win.clear()
         self._draw()
 
-    @abstractmethod
-    def _action(self, action: Action) -> None:
-        pass
+    def getch(self) -> int:
+        return self._win.getch()
 
-    def handle_input(self) -> None:
-        key: int = self._win.getch()
-        if key not in self.BINDINGS:
-            return
-        self._action(self.BINDINGS[key])
+    @abstractmethod
+    def action(self, action: Action) -> None:
+        pass
