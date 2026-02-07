@@ -33,10 +33,9 @@ CLI app to manage todo list written in Python standard library.
     - `end` / `G` Move to bottom of list
     - `d` Move down half a page
     - `u` Move up half a page
-
-TODO: Add ability to complete item from list view
-TODO: Add ability to re-order list
-TODO: Add highlighting overdue items (bold?)
+- TODO: Add ability to complete item from list view
+- TODO: Add ability to re-order list
+- TODO: Add highlighting overdue items (bold?)
 
 #### Item
 
@@ -44,8 +43,7 @@ TODO: Add highlighting overdue items (bold?)
 - Navigation
     - `up` / `k` Move up
     - `down` / `j` Move down
-
-TODO: Add ability to edit item
+- TODO: Add ability to edit item
 
 ## Development
 
