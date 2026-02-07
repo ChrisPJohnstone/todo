@@ -4,6 +4,7 @@ from logging import DEBUG, Logger, getLogger
 from ..constants import Action, Key
 from ..item import Item
 from ..type_definitions import Bindings
+from ..utils import message_box
 from ._base import WinBase
 
 
@@ -58,18 +59,52 @@ class WinItem(WinBase):
             self.x_strt,  # begin_x
         )
 
+    def _message_box(
+        self,
+        win: window,
+        title: str,
+        message: str,
+        x_strt: int = 0,
+        y_strt: int = 0,
+    ) -> None:
+        message_box(
+            win=win,
+            x_strt=x_strt,
+            y_strt=y_strt,
+            x_stop=self.x_len - 2,
+            y_max=self.y_len,
+            title=title,
+            message=message,
+        )
+
     def _draw(self) -> None:
         self._log(DEBUG, "Drawing")
         self._win.vline(self.y_strt, self.x_strt)
         self._win.refresh()
-        message_win: window = newwin(
+        item_win: window = newwin(
             self.y_len,  # nlines
-            self.x_len - 1,  # ncols
+            self.x_len,  # ncols
             self.y_strt,  # begin_y
             self.x_strt + 1,  # begin_x
         )
-        message_win.addstr(0, 0, self.item.message)
-        message_win.refresh()
+        self._message_box(
+            win=item_win,
+            title="Created At",
+            message=self.item.created_at,
+        )
+        self._message_box(
+            win=item_win,
+            y_strt=3,
+            title="Due",
+            message=self.item.due,
+        )
+        self._message_box(
+            win=item_win,
+            y_strt=6,
+            title="Message",
+            message=self.item.message,
+        )
+        item_win.refresh()
 
     def action(self, action: Action, windows: list[WinBase]) -> None:
         match action:

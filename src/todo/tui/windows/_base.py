@@ -100,7 +100,7 @@ class WinBase(ABC):
 
     @property
     def x_len(self) -> int:
-        return self.x_stop - self.x_strt
+        return self.x_stop - self.x_strt + 1
 
     @property
     def y_strt(self) -> int:

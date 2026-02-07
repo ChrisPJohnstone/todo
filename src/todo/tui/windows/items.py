@@ -107,7 +107,12 @@ class WinItems(WinBase):
         return f"Items Window: {message}"
 
     def init_win(self) -> None:
-        self._win = newwin(self.y_len, self.x_len)
+        self._win = newwin(
+            self.y_len,  # nlines
+            self.x_len,  # ncols
+            self.y_strt,  # begin_y
+            self.x_strt,  # begin_x
+        )
 
     def refresh_page_start(self) -> None:
         self._log(DEBUG, "Redrawing bounds")
@@ -125,7 +130,7 @@ class WinItems(WinBase):
         self._log(DEBUG, "Drawing")
         divider: str = ": "
         id_width: int = self.max_id_len
-        max_message_width: int = self.x_len - id_width - len(divider) + 1
+        max_message_width: int = self.x_len - id_width - len(divider)
         line: int = 0
         for index in range(self.index_start, self.index_end):
             item: Item = self.items[index]
