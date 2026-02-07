@@ -1,4 +1,4 @@
-from curses import newpad, window
+from curses import newwin, window
 from logging import DEBUG, Logger, getLogger
 
 from ..constants import Action, Key
@@ -61,16 +61,14 @@ class WinItem(WinBase):
             self.y_stop - 1,  # smaxrow
             self.x_stop,  # smaxcol
         )
-        message_win: window = newpad(self.y_len, self.x_len - 1)
-        message_win.addstr(0, 0, self.item.message)
-        message_win.refresh(
-            0,  # pminrow
-            0,  # pmincol
-            self.y_strt,  # sminrow
-            self.x_strt + 1,  # smincol
-            self.y_stop - 1,  # smaxrow
-            self.x_stop,  # smaxcol
+        message_win: window = newwin(
+            self.y_len,  # nlines
+            self.x_len - 1,  # ncols
+            self.y_strt,  # begin_y
+            self.x_strt + 1,  # begin_x
         )
+        message_win.addstr(0, 0, self.item.message)
+        message_win.refresh()
 
     def action(self, action: Action, windows: list[WinBase]) -> None:
         match action:
