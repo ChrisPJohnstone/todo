@@ -51,7 +51,8 @@ class WinItem(WinBase):
 
     def _draw(self) -> None:
         self._log(DEBUG, "Drawing")
-        self._win.addstr("test")
+        self._win.vline(self.y_strt, self.x_strt)
+        self._win.addstr(0, 1, self.item.message)
         self._win.refresh(
             0,  # pminrow
             0,  # pmincol
