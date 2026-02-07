@@ -10,16 +10,16 @@ from ..type_definitions import Bindings
 class WinBase(ABC):
     def __init__(
         self,
-        width: int,
-        height: int,
+        rows: int,
+        cols: int,
         logger: Logger = getLogger(__name__),
     ) -> None:
         self._logger = logger
         self._win = newpad(1000, 1000)
         # TODO: Give options to children
         # TODO: Fix hardcoded
-        self.width = width
-        self.height = height
+        self.rows = rows
+        self.cols = cols
 
     @property
     @abstractmethod
@@ -44,22 +44,22 @@ class WinBase(ABC):
         self.__win: window = value
 
     @property
-    def width(self) -> int:
-        return self._width
+    def rows(self) -> int:
+        return self._rows
 
-    @width.setter
-    def width(self, value: int) -> None:
-        self._log(DEBUG, f"Setting width to {value}")
-        self._width: int = value
+    @rows.setter
+    def rows(self, value: int) -> None:
+        self._log(DEBUG, f"Setting rows to {value}")
+        self._rows: int = value
 
     @property
-    def height(self) -> int:
-        return self._height
+    def cols(self) -> int:
+        return self._cols
 
-    @height.setter
-    def height(self, value: int) -> None:
-        self._log(DEBUG, f"Setting height to {value}")
-        self._height: int = value
+    @cols.setter
+    def cols(self, value: int) -> None:
+        self._log(DEBUG, f"Setting cols to {value}")
+        self._cols: int = value
 
     @staticmethod
     @abstractmethod

@@ -10,12 +10,12 @@ from ..type_definitions import Bindings
 class WinItems(WinBase):
     def __init__(
         self,
-        width: int,
-        height: int,
+        rows: int,
+        cols: int,
         items: list[Item],
         logger: Logger = getLogger(__name__),
     ) -> None:
-        super().__init__(width, height, logger)
+        super().__init__(rows, cols, logger)
         self.items = items
 
     @property
@@ -84,7 +84,7 @@ class WinItems(WinBase):
 
     @property
     def index_end(self) -> int:
-        return self.index_start + min(self.n_items, self.height)
+        return self.index_start + min(self.n_items, self.rows)
 
     @staticmethod
     def _message(message: str) -> str:
@@ -100,13 +100,13 @@ class WinItems(WinBase):
         if self.index_current > self.index_end - 1:
             self._log(DEBUG, "Moving page down")
             relative_position: int = self.index_current - self.index_start
-            self.index_start += relative_position - self.height + 1
+            self.index_start += relative_position - self.rows + 1
 
     def _draw(self) -> None:
-        self._log(DEBUG, "test")
+        self._log(DEBUG, "Drawing")
         divider: str = ": "
         id_width: int = self.max_id_len
-        max_message_width: int = self.width - id_width - len(divider)
+        max_message_width: int = self.cols - id_width - len(divider)
         line: int = 0
         for index in range(self.index_start, self.index_end):
             item: Item = self.items[index]
@@ -120,7 +120,7 @@ class WinItems(WinBase):
             else:
                 self._win.addstr(line, 0, item_str)
             line += 1
-        self._win.refresh(0, 0, 0, 0, self.height - 1, self.width)
+        self._win.refresh(0, 0, 0, 0, self.rows - 1, self.cols)
 
     def action(self, action: Action, windows: list[WinBase]) -> None:
         match action:
@@ -135,8 +135,8 @@ class WinItems(WinBase):
             case Action.GOTO_END:
                 self.index_current = self.index_max
             case Action.JUMP_DOWN:
-                new: int = self.index_current + (self.height // 2)
+                new: int = self.index_current + (self.rows // 2)
                 self.index_current = min(new, self.index_max)
             case Action.JUMP_UP:
-                new: int = self.index_current - (self.height // 2)
+                new: int = self.index_current - (self.rows // 2)
                 self.index_current = max(new, 0)

@@ -118,8 +118,8 @@ class TUI:
         """
         curs_set(0)
         win_items: WinItems = WinItems(
-            width=self.max_width,
-            height=self.max_height,
+            cols=self.max_width,
+            rows=self.max_height,
             items=self.items,
             logger=self._logger,
         )
