@@ -2,8 +2,8 @@ from curses import A_REVERSE, newpad, window
 from logging import DEBUG, Logger, getLogger
 
 from todo.database import DatabaseClient
-from .constants import Action, BINDING
-from .item import Item
+from ..constants import Action, BINDING
+from ..item import Item
 
 
 class WinItems:

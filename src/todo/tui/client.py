@@ -1,7 +1,7 @@
 from curses import curs_set, window, wrapper
 from logging import DEBUG, Logger, getLogger
 
-from ._win_items import WinItems
+from .windows import WinItems
 from todo.database import DatabaseClient
 from todo.utils import terminal_height, terminal_width
 
