@@ -1,4 +1,13 @@
-from curses import KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_UP
+from curses import (
+    KEY_DOWN,
+    KEY_END,
+    KEY_HOME,
+    KEY_LEFT,
+    KEY_NPAGE,
+    KEY_PPAGE,
+    KEY_RIGHT,
+    KEY_UP,
+)
 from enum import IntEnum, unique
 
 
@@ -8,6 +17,8 @@ class Key(IntEnum):
     ARROW_LEFT = KEY_LEFT
     ARROW_RIGHT = KEY_RIGHT
     ARROW_UP = KEY_UP
+    END = KEY_END
+    HOME = KEY_HOME
     L_A = ord("a")
     L_B = ord("b")
     L_C = ord("c")
@@ -34,6 +45,8 @@ class Key(IntEnum):
     L_X = ord("x")
     L_Y = ord("y")
     L_Z = ord("z")
+    PAGE_DOWN = KEY_NPAGE
+    PAGE_UP = KEY_PPAGE
     U_A = ord("A")
     U_B = ord("B")
     U_C = ord("C")

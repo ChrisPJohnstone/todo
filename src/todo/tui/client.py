@@ -72,11 +72,11 @@ class TUI:
             self.index_page_start = 0
         if value < 0 or value > self.max_index:
             value = value % self.n_items
-            self.index_page_start = min(value, self.n_items - self.max_height())
         if value < self.index_page_start:
-            self.index_page_start -= 1
+            self.index_page_start = value
         if value > self.index_page_end - 1:
-            self.index_page_start += 1
+            relative_position: int = value - self.index_page_start
+            self.index_page_start += relative_position - self.max_height() + 1
         self._current_index: int = value
 
     @property
@@ -153,6 +153,10 @@ class TUI:
                 self.index_current += 1
             case Action.UP:
                 self.index_current -= 1
+            case Action.GOTO_TOP:
+                self.index_current = 0
+            case Action.GOTO_END:
+                self.index_current = self.max_index
 
     def main(self, stdscr: window) -> None:
         """
