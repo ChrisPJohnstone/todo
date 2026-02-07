@@ -16,9 +16,9 @@ def message_box(
     if len(title) > len_x - 2:
         raise ValueError(f"Title {title} is longer than box")
     lines: list[str] = wrap(message, len_x - 2)
-    max_len_y: int = y_max - y_strt
-    if len(lines) > max_len_y - 2:
-        raise ValueError(f"Message {message} doesn't fit in box")
+    max_len_y: int = y_max - y_strt - 2
+    if len(lines) > max_len_y:
+        lines = lines[: max_len_y - 2]
     y_stop: int = y_strt + len(lines) + 1
     rectangle(win, y_strt, x_strt, y_stop, x_stop)
     win.addstr(y_strt, 1, title)

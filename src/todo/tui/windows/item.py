@@ -71,20 +71,20 @@ class WinItem(WinBase):
             win=win,
             x_strt=x_strt,
             y_strt=y_strt,
-            x_stop=self.x_len - 2,
-            y_max=self.y_len,
+            x_stop=self.x_len - 3,
+            y_max=self.y_len - 1,
             title=title,
             message=message,
         )
 
     def _draw(self) -> None:
         self._log(DEBUG, "Drawing")
-        self._win.vline(self.y_strt, self.x_strt)
+        self._win.border()
         self._win.refresh()
         item_win: window = newwin(
-            self.y_len,  # nlines
-            self.x_len,  # ncols
-            self.y_strt,  # begin_y
+            self.y_len - 2,  # nlines
+            self.x_len - 2,  # ncols
+            self.y_strt + 1,  # begin_y
             self.x_strt + 1,  # begin_x
         )
         self._message_box(
