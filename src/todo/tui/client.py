@@ -1,6 +1,7 @@
 from curses import curs_set, window, wrapper
 from logging import DEBUG, Logger, getLogger
 
+from .item import Item
 from .windows import WinItems
 from todo.database import DatabaseClient
 from todo.utils import terminal_height, terminal_width
@@ -13,9 +14,10 @@ class TUI:
         logger: Logger = getLogger(__name__),
     ) -> None:
         self._logger = logger
-        self.database_client: DatabaseClient = database_client
-        self.refresh_bounds()
         # TODO: Handle Resize
+        self.database_client: DatabaseClient = database_client
+        self.refresh_items()
+        self.refresh_bounds()
         wrapper(self.main)
 
     @property
@@ -35,6 +37,15 @@ class TUI:
     def database_client(self, value: DatabaseClient) -> None:
         self._log(DEBUG, "Setting database client")
         self._database_client: DatabaseClient = value
+
+    @property
+    def items(self) -> list[Item]:
+        return self._items
+
+    @items.setter
+    def items(self, value: list[Item]) -> None:
+        self._log(DEBUG, f"Setting items to {value}")
+        self._items: list[Item] = value
 
     @property
     def max_width(self) -> int:
@@ -71,6 +82,12 @@ class TUI:
         self.refresh_max_width()
         self.refresh_max_height()
 
+    def refresh_items(self) -> None:
+        self._log(DEBUG, "Refreshing items")
+        self.items: list[Item] = []
+        for item in self.database_client.get_list()[1:]:
+            self.items.append(Item(*item))
+
     def main(self, stdscr: window) -> None:
         """
         Main Processing Loop For TUI
@@ -80,9 +97,9 @@ class TUI:
         """
         curs_set(0)
         win_items: WinItems = WinItems(
-            max_width=self.max_width,
-            max_height=self.max_height,
-            database_client=self.database_client,
+            width=self.max_width,
+            height=self.max_height,
+            items=self.items,
             logger=self._logger,
         )
         stdscr.refresh()

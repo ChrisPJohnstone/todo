@@ -1,7 +1,6 @@
 from curses import A_REVERSE, newpad, window
 from logging import DEBUG, Logger, getLogger
 
-from todo.database import DatabaseClient
 from ..constants import Action, BINDING
 from ..item import Item
 
@@ -9,19 +8,18 @@ from ..item import Item
 class WinItems:
     def __init__(
         self,
-        max_width: int,
-        max_height: int,
-        database_client: DatabaseClient,
+        width: int,
+        height: int,
+        items: list[Item],
         logger: Logger = getLogger(__name__),
     ) -> None:
         self._logger = logger
         self._win = newpad(1000, 1000)
         # TODO: Fix hardcoded
-        self.max_width = max_width
-        self.max_height = max_height
+        self.width = width
+        self.height = height
+        self.items = items
         self.keep_running = True
-        self.database_client: DatabaseClient = database_client
-        self.refresh_items()
 
     @property
     def _logger(self) -> Logger:
@@ -41,16 +39,6 @@ class WinItems:
         self.__win: window = value
 
     @property
-    def database_client(self) -> DatabaseClient:
-        """Database client used by TUI"""
-        return self._database_client
-
-    @database_client.setter
-    def database_client(self, value: DatabaseClient) -> None:
-        self._log(DEBUG, "Setting database client")
-        self._database_client: DatabaseClient = value
-
-    @property
     def keep_running(self) -> bool:
         return self._keep_running
 
@@ -60,22 +48,22 @@ class WinItems:
         self._keep_running: bool = value
 
     @property
-    def max_width(self) -> int:
-        return self._max_width
+    def width(self) -> int:
+        return self._width
 
-    @max_width.setter
-    def max_width(self, value: int) -> None:
-        self._log(DEBUG, f"Setting max width to {value}")
-        self._max_width: int = value
+    @width.setter
+    def width(self, value: int) -> None:
+        self._log(DEBUG, f"Setting width to {value}")
+        self._width: int = value
 
     @property
-    def max_height(self) -> int:
-        return self._max_height
+    def height(self) -> int:
+        return self._height
 
-    @max_height.setter
-    def max_height(self, value: int) -> None:
-        self._log(DEBUG, f"Setting max height to {value}")
-        self._max_height: int = value
+    @height.setter
+    def height(self, value: int) -> None:
+        self._log(DEBUG, f"Setting height to {value}")
+        self._height: int = value
 
     @property
     def items(self) -> list[Item]:
@@ -85,6 +73,7 @@ class WinItems:
     def items(self, value: list[Item]) -> None:
         self._log(DEBUG, f"Setting items to {value}")
         self._items: list[Item] = value
+        self.index_current = 0
 
     @property
     def n_items(self) -> int:
@@ -126,7 +115,7 @@ class WinItems:
 
     @property
     def index_end(self) -> int:
-        return self.index_start + min(self.n_items, self.max_height)
+        return self.index_start + min(self.n_items, self.height)
 
     @staticmethod
     def _message(message: str) -> str:
@@ -145,20 +134,13 @@ class WinItems:
         if self.index_current > self.index_end - 1:
             self._log(DEBUG, "Moving page down")
             relative_position: int = self.index_current - self.index_start
-            self.index_start += relative_position - self.max_height + 1
-
-    def refresh_items(self) -> None:
-        self._log(DEBUG, "Refreshing items")
-        self.items: list[Item] = []
-        for item in self.database_client.get_list()[1:]:
-            self.items.append(Item(*item))
-        self.index_current = 0
+            self.index_start += relative_position - self.height + 1
 
     def draw_items(self, win: window) -> None:
         self._log(DEBUG, "test")
         divider: str = ": "
         id_width: int = self.max_id_len
-        max_message_width: int = self.max_width - id_width - len(divider)
+        max_message_width: int = self.width - id_width - len(divider)
         line: int = 0
         for index in range(self.index_start, self.index_end):
             item: Item = self.items[index]
@@ -172,7 +154,7 @@ class WinItems:
             else:
                 win.addstr(line, 0, item_str)
             line += 1
-        self._win.refresh(0, 0, 0, 0, self.max_height - 1, self.max_width)
+        self._win.refresh(0, 0, 0, 0, self.height - 1, self.width)
 
     def handle_input(self, win: window) -> None:
         key: int = win.getch()
@@ -190,8 +172,8 @@ class WinItems:
             case Action.GOTO_END:
                 self.index_current = self.index_max
             case Action.JUMP_DOWN:
-                new: int = self.index_current + (self.max_height // 2)
+                new: int = self.index_current + (self.height // 2)
                 self.index_current = min(new, self.index_max)
             case Action.JUMP_UP:
-                new: int = self.index_current - (self.max_height // 2)
+                new: int = self.index_current - (self.height // 2)
                 self.index_current = max(new, 0)
