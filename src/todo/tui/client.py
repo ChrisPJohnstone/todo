@@ -67,22 +67,17 @@ class TUI:
         self._max_height: int = value
 
     @property
-    def keep_running(self) -> bool:
-        return self._keep_running
+    def windows(self) -> list[WinBase]:
+        return self._windows
 
-    @keep_running.setter
-    def keep_running(self, value: bool) -> None:
-        self._log(DEBUG, f"Setting keep_running to {value}")
-        self._keep_running: bool = value
+    @windows.setter
+    def windows(self, value: list[WinBase]) -> None:
+        self._log(DEBUG, f"Settings windows to {value}")
+        self._windows: list[WinBase] = value
 
     @property
     def active_window(self) -> WinBase:
-        return self._active_window
-
-    @active_window.setter
-    def active_window(self, value: WinBase) -> None:
-        self._log(DEBUG, "Setting active window")
-        self._active_window: WinBase = value
+        return self.windows[0]
 
     @staticmethod
     def _message(message: str) -> str:
@@ -113,8 +108,8 @@ class TUI:
             return
         action: Action = self.active_window.BINDINGS[key]
         if action is Action.QUIT:
-            self.keep_running = False
-            # TODO: Handle nesting quits
+            self.windows.pop(0)
+            return
         self.active_window.action(action)
 
     def main(self, stdscr: window) -> None:
@@ -131,11 +126,9 @@ class TUI:
             items=self.items,
             logger=self._logger,
         )
-        self.active_window = win_items
-        # TODO: Handle stack
+        self.windows = [win_items]
         stdscr.refresh()
-        self.keep_running = True
-        while self.keep_running:
+        while self.windows:
             stdscr.clear()
             self.active_window.draw()
             self.handle_input()
