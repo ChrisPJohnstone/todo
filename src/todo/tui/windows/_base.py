@@ -5,11 +5,13 @@ from logging import DEBUG, Logger, getLogger
 
 from ..constants import Action
 from ..type_definitions import Bindings
+from todo.database import DatabaseClient
 
 
 class WinBase(ABC):
     def __init__(
         self,
+        database_client: DatabaseClient,
         x_max: int,
         y_max: int,
         x_len_max: int,
@@ -19,6 +21,7 @@ class WinBase(ABC):
         logger: Logger = getLogger(__name__),
     ) -> None:
         self._logger = logger
+        self.database_client: DatabaseClient = database_client
         self.x_max = x_max
         self.y_max = y_max
         self.x_len_max = x_len_max
@@ -48,6 +51,16 @@ class WinBase(ABC):
     def _win(self, value: window) -> None:
         self._log(DEBUG, "Setting _win")
         self.__win: window = value
+
+    @property
+    def database_client(self) -> DatabaseClient:
+        """Database client used by TUI"""
+        return self._database_client
+
+    @database_client.setter
+    def database_client(self, value: DatabaseClient) -> None:
+        self._log(DEBUG, "Setting database client")
+        self._database_client: DatabaseClient = value
 
     @property
     def x_max(self) -> int:

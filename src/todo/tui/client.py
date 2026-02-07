@@ -119,6 +119,7 @@ class TUI:
         """
         curs_set(0)
         win_items: WinItems = WinItems(
+            database_client=self.database_client,
             x_max=self.cols,
             y_max=self.rows,
             x_len_max=self.cols,

@@ -6,11 +6,13 @@ from ..item import Item
 from ..type_definitions import Bindings
 from ._base import WinBase
 from .item import WinItem
+from todo.database import DatabaseClient
 
 
 class WinItems(WinBase):
     def __init__(
         self,
+        database_client: DatabaseClient,
         x_max: int,
         y_max: int,
         x_len_max: int,
@@ -21,6 +23,7 @@ class WinItems(WinBase):
         logger: Logger = getLogger(__name__),
     ) -> None:
         super().__init__(
+            database_client=database_client,
             x_strt=x_strt,
             y_strt=y_strt,
             x_max=x_max,
@@ -166,6 +169,7 @@ class WinItems(WinBase):
                 self.index_current = max(new, 0)
             case Action.ENTER:
                 win_item: WinItem = WinItem(
+                    database_client=self.database_client,
                     x_strt=self.x_len_max // 2,
                     y_strt=self.y_strt,
                     x_max=self.x_max,

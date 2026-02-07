@@ -6,11 +6,13 @@ from ..item import Item
 from ..type_definitions import Bindings
 from ..utils import message_box
 from ._base import WinBase
+from todo.database import DatabaseClient
 
 
 class WinItem(WinBase):
     def __init__(
         self,
+        database_client: DatabaseClient,
         x_max: int,
         y_max: int,
         x_len_max: int,
@@ -21,6 +23,7 @@ class WinItem(WinBase):
         logger: Logger = getLogger(__name__),
     ) -> None:
         super().__init__(
+            database_client=database_client,
             x_strt=x_strt,
             y_strt=y_strt,
             x_max=x_max,
