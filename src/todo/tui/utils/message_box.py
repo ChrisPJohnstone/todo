@@ -21,6 +21,7 @@ def message_box(
     max_len_y: int = y_max - y_strt - 2
     if len(lines) > max_len_y:
         lines = lines[: max_len_y - 2]
+        lines[-1] = f"{lines[-1][: -3]}..."
     y_stop: int = y_strt + len(lines) + 1
     rectangle(win, y_strt, x_strt, y_stop, x_stop)
     title_y: int = 1
