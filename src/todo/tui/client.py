@@ -105,5 +105,5 @@ class TUI:
         stdscr.refresh()
         while win_items.keep_running:
             stdscr.clear()
-            win_items.draw_items(stdscr)
-            win_items.handle_input(stdscr)
+            win_items.draw()
+            win_items.handle_input()

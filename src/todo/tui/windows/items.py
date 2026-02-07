@@ -1,11 +1,12 @@
-from curses import A_REVERSE, newpad, window
+from curses import A_REVERSE
 from logging import DEBUG, Logger, getLogger
 
-from ..constants import Action, BINDING
+from ._base import WinBase
+from ..constants import Action
 from ..item import Item
 
 
-class WinItems:
+class WinItems(WinBase):
     def __init__(
         self,
         width: int,
@@ -13,57 +14,8 @@ class WinItems:
         items: list[Item],
         logger: Logger = getLogger(__name__),
     ) -> None:
-        self._logger = logger
-        self._win = newpad(1000, 1000)
-        # TODO: Fix hardcoded
-        self.width = width
-        self.height = height
+        super().__init__(width, height, logger)
         self.items = items
-        self.keep_running = True
-
-    @property
-    def _logger(self) -> Logger:
-        return self.__logger
-
-    @_logger.setter
-    def _logger(self, value: Logger) -> None:
-        self.__logger: Logger = value
-
-    @property
-    def _win(self) -> window:
-        return self.__win
-
-    @_win.setter
-    def _win(self, value: window) -> None:
-        self._log(DEBUG, "Setting _win")
-        self.__win: window = value
-
-    @property
-    def keep_running(self) -> bool:
-        return self._keep_running
-
-    @keep_running.setter
-    def keep_running(self, value: bool) -> None:
-        self._log(DEBUG, f"Setting keep_running to {value}")
-        self._keep_running: bool = value
-
-    @property
-    def width(self) -> int:
-        return self._width
-
-    @width.setter
-    def width(self, value: int) -> None:
-        self._log(DEBUG, f"Setting width to {value}")
-        self._width: int = value
-
-    @property
-    def height(self) -> int:
-        return self._height
-
-    @height.setter
-    def height(self, value: int) -> None:
-        self._log(DEBUG, f"Setting height to {value}")
-        self._height: int = value
 
     @property
     def items(self) -> list[Item]:
@@ -121,9 +73,6 @@ class WinItems:
     def _message(message: str) -> str:
         return f"Items Window: {message}"
 
-    def _log(self, level: int, message: str) -> None:
-        self._logger.log(level, self._message(message))
-
     def refresh_page_start(self) -> None:
         self._log(DEBUG, "Redrawing bounds")
         if not hasattr(self, "_index_start"):
@@ -136,7 +85,7 @@ class WinItems:
             relative_position: int = self.index_current - self.index_start
             self.index_start += relative_position - self.height + 1
 
-    def draw_items(self, win: window) -> None:
+    def _draw(self) -> None:
         self._log(DEBUG, "test")
         divider: str = ": "
         id_width: int = self.max_id_len
@@ -150,17 +99,14 @@ class WinItems:
                 message_str: str = item.message
             item_str: str = f"{item.id:>0{id_width}}{divider}{message_str}"
             if index == self.index_current:
-                win.addstr(line, 0, item_str, A_REVERSE)
+                self._win.addstr(line, 0, item_str, A_REVERSE)
             else:
-                win.addstr(line, 0, item_str)
+                self._win.addstr(line, 0, item_str)
             line += 1
         self._win.refresh(0, 0, 0, 0, self.height - 1, self.width)
 
-    def handle_input(self, win: window) -> None:
-        key: int = win.getch()
-        if key not in BINDING:
-            return
-        match BINDING[key]:
+    def _action(self, action: Action) -> None:
+        match action:
             case Action.QUIT:
                 self.keep_running = False
             case Action.DOWN:
