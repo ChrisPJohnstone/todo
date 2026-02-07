@@ -1,3 +1,4 @@
+from __future__ import annotations  # TODO: Remove at 3.14+
 from abc import ABC, abstractmethod
 from curses import newpad, window
 from logging import DEBUG, Logger, getLogger
@@ -80,5 +81,5 @@ class WinBase(ABC):
         return self._win.getch()
 
     @abstractmethod
-    def action(self, action: Action) -> None:
+    def action(self, action: Action, windows: list[WinBase]) -> None:
         pass

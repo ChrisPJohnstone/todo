@@ -107,10 +107,7 @@ class TUI:
         if key not in self.active_window.BINDINGS:
             return
         action: Action = self.active_window.BINDINGS[key]
-        if action is Action.QUIT:
-            self.windows.pop(0)
-            return
-        self.active_window.action(action)
+        self.active_window.action(action, self.windows)
 
     def main(self, stdscr: window) -> None:
         """

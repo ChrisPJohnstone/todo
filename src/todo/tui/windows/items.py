@@ -122,8 +122,10 @@ class WinItems(WinBase):
             line += 1
         self._win.refresh(0, 0, 0, 0, self.height - 1, self.width)
 
-    def action(self, action: Action) -> None:
+    def action(self, action: Action, windows: list[WinBase]) -> None:
         match action:
+            case Action.QUIT:
+                windows.pop(0)
             case Action.DOWN:
                 self.index_current += 1
             case Action.UP:
