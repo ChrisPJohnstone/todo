@@ -35,6 +35,8 @@ class WinItem(WinBase):
     def BINDINGS(self) -> Bindings:
         return {
             Key.L_Q: Action.QUIT,
+            Key.L_J: Action.DOWN,
+            Key.L_K: Action.UP,
         }
 
     @property
@@ -134,3 +136,7 @@ class WinItem(WinBase):
         match action:
             case Action.QUIT:
                 windows.pop(0)
+            case Action.DOWN:
+                self.index_current += 1
+            case Action.UP:
+                self.index_current -= 1
