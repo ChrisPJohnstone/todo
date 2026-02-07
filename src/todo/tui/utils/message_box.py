@@ -21,6 +21,9 @@ def message_box(
         lines = lines[: max_len_y - 2]
     y_stop: int = y_strt + len(lines) + 1
     rectangle(win, y_strt, x_strt, y_stop, x_stop)
-    win.addstr(y_strt, 1, title)
+    title_y: int = 1
+    for word in title.split(" "):
+        win.addstr(y_strt, title_y, word)
+        title_y += len(word) + 1
     for index, line in enumerate(lines):
         win.addstr(y_strt + index + 1, 1, line)
