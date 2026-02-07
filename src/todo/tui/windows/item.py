@@ -1,4 +1,4 @@
-from curses import newwin, window
+from curses import A_NORMAL, A_REVERSE, newwin, window
 from logging import DEBUG, Logger, getLogger
 
 from ..constants import Action, Key
@@ -47,6 +47,33 @@ class WinItem(WinBase):
         self._items: Item = value
         self.index_current = 0
 
+    @property
+    def fields(self) -> dict[str, str]:
+        return {
+            "Created At": self.item.created_at,
+            "Due": self.item.due,
+            "Message": self.item.message,
+        }
+
+    @property
+    def n_fields(self) -> int:
+        return len(self.fields)
+
+    @property
+    def index_max(self) -> int:
+        return self.n_fields - 1
+
+    @property
+    def index_current(self) -> int:
+        return self._index_current
+
+    @index_current.setter
+    def index_current(self, value: int) -> None:
+        self._log(DEBUG, f"Setting index current to {value}")
+        if value < 0 or value > self.index_max:
+            value = value % self.n_fields
+        self._index_current: int = value
+
     @staticmethod
     def _message(message: str) -> str:
         return f"Item Window: {message}"
@@ -64,6 +91,7 @@ class WinItem(WinBase):
         win: window,
         title: str,
         message: str,
+        title_attr: int,
         x_strt: int = 0,
         y_strt: int = 0,
     ) -> None:
@@ -75,6 +103,7 @@ class WinItem(WinBase):
             y_max=self.y_len - 1,
             title=title,
             message=message,
+            title_attr=title_attr,
         )
 
     def _draw(self) -> None:
@@ -87,23 +116,18 @@ class WinItem(WinBase):
             self.y_strt + 1,  # begin_y
             self.x_strt + 1,  # begin_x
         )
-        self._message_box(
-            win=item_win,
-            title="Created At",
-            message=self.item.created_at,
-        )
-        self._message_box(
-            win=item_win,
-            y_strt=3,
-            title="Due",
-            message=self.item.due,
-        )
-        self._message_box(
-            win=item_win,
-            y_strt=6,
-            title="Message",
-            message=self.item.message,
-        )
+        for index, title in enumerate(self.fields):
+            if index == self.index_current:
+                title_attr: int = A_REVERSE
+            else:
+                title_attr: int = A_NORMAL
+            self._message_box(
+                win=item_win,
+                title=title,
+                message=self.fields[title],
+                y_strt=index * 3,
+                title_attr=title_attr,
+            )
         item_win.refresh()
 
     def action(self, action: Action, windows: list[WinBase]) -> None:
