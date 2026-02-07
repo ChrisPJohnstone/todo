@@ -54,6 +54,7 @@ class WinItem(WinBase):
         return {
             "Created At": self.item.created_at,
             "Due": self.item.due,
+            "Completed": str(bool(self.item.completed)),
             "Message": self.item.message,
         }
 

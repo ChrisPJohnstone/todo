@@ -7,5 +7,5 @@ class Item:
     created_at: str = field(repr=False)
     message: str
     due: str = field(repr=False)
-    completed: bool = field(repr=False)
+    completed: str = field(repr=False)
     completed_at: str = field(repr=False)
