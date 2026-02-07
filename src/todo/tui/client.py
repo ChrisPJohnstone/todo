@@ -15,6 +15,8 @@ class TUI:
     ) -> None:
         self._logger = logger
         self.database_client: DatabaseClient = database_client
+        self.refresh_bounds()
+        # TODO: Handle Resize
         self.refresh_items()
         wrapper(self.main)
 
@@ -35,6 +37,24 @@ class TUI:
     @database_client.setter
     def database_client(self, value: DatabaseClient) -> None:
         self._database_client: DatabaseClient = value
+
+    @property
+    def max_width(self) -> int:
+        return self._max_width
+
+    @max_width.setter
+    def max_width(self, value: int) -> None:
+        self._log(DEBUG, f"Setting max width to {value}")
+        self._max_width: int = value
+
+    @property
+    def max_height(self) -> int:
+        return self._max_height
+
+    @max_height.setter
+    def max_height(self, value: int) -> None:
+        self._log(DEBUG, f"Setting max height to {value}")
+        self._max_height: int = value
 
     @property
     def items(self) -> list[Item]:
@@ -68,16 +88,11 @@ class TUI:
     @index_current.setter
     def index_current(self, value: int) -> None:
         self._log(DEBUG, f"Setting current index to {value}")
-        if not hasattr(self, "_index_page_start"):
-            self.index_page_start = 0
         if value < 0 or value > self.max_index:
+            self._log(DEBUG, "Wrapping out of bounds value")
             value = value % self.n_items
-        if value < self.index_page_start:
-            self.index_page_start = value
-        if value > self.index_page_end - 1:
-            relative_position: int = value - self.index_page_start
-            self.index_page_start += relative_position - self.max_height() + 1
         self._current_index: int = value
+        self.refresh_page_bounds()
 
     @property
     def index_page_start(self) -> int:
@@ -90,7 +105,7 @@ class TUI:
 
     @property
     def index_page_end(self) -> int:
-        return self.index_page_start + min(self.n_items, self.max_height())
+        return self.index_page_start + min(self.n_items, self.max_height)
 
     @property
     def keep_running(self) -> bool:
@@ -108,13 +123,27 @@ class TUI:
     def _log(self, level: int, message: str) -> None:
         self._logger.log(level, self._message(message))
 
-    def max_height(self) -> int:
-        # TODO: Handle resize
-        return terminal_height()
+    def refresh_max_width(self) -> None:
+        self.max_width = terminal_width() - 1
 
-    def max_width(self) -> int:
-        # TODO: Handle resize
-        return terminal_width() - 1
+    def refresh_max_height(self) -> None:
+        self.max_height = terminal_height()
+
+    def refresh_bounds(self) -> None:
+        self.refresh_max_width()
+        self.refresh_max_height()
+
+    def refresh_page_bounds(self) -> None:
+        self._log(DEBUG, "Redrawing bounds")
+        if not hasattr(self, "_index_page_start"):
+            self.index_page_start = 0
+        if self.index_current < self.index_page_start:
+            self._log(DEBUG, "Moving page up")
+            self.index_page_start = self.index_current
+        if self.index_current > self.index_page_end - 1:
+            self._log(DEBUG, "Moving page down")
+            relative_position: int = self.index_current - self.index_page_start
+            self.index_page_start += relative_position - self.max_height + 1
 
     def refresh_items(self) -> None:
         self._log(DEBUG, "Refreshing items")
@@ -127,7 +156,7 @@ class TUI:
         self._log(DEBUG, "test")
         divider: str = ": "
         id_width: int = self.max_id_len
-        max_message_width: int = self.max_width() - id_width - len(divider)
+        max_message_width: int = self.max_width - id_width - len(divider)
         line: int = 0
         for index in range(self.index_page_start, self.index_page_end):
             item: Item = self.items[index]
@@ -158,12 +187,10 @@ class TUI:
             case Action.GOTO_END:
                 self.index_current = self.max_index
             case Action.JUMP_DOWN:
-                max_height: int = self.max_height()
-                new: int = self.index_current + (max_height // 2)
+                new: int = self.index_current + (self.max_height // 2)
                 self.index_current = min(new, self.max_index)
             case Action.JUMP_UP:
-                max_height: int = self.max_height()
-                new: int = self.index_current - (max_height // 2)
+                new: int = self.index_current - (self.max_height // 2)
                 self.index_current = max(new, 0)
 
     def main(self, stdscr: window) -> None:
