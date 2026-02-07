@@ -1,6 +1,7 @@
 from curses import curs_set, window, wrapper
 from logging import DEBUG, Logger, getLogger
 
+from .constants import Action
 from .item import Item
 from .windows import WinBase, WinItems
 from todo.database import DatabaseClient
@@ -97,6 +98,13 @@ class TUI:
         for item in self.database_client.get_list()[1:]:
             self.items.append(Item(*item))
 
+    def handle_input(self, win: window) -> None:
+        key: int = win.getch()
+        if key not in self.active_window.BINDINGS:
+            return
+        action: Action = self.active_window.BINDINGS[key]
+        self.active_window.action(action)
+
     def main(self, stdscr: window) -> None:
         """
         Main Processing Loop For TUI
@@ -116,4 +124,4 @@ class TUI:
         while self.active_window.keep_running:
             stdscr.clear()
             self.active_window.draw()
-            self.active_window.handle_input()
+            self.handle_input(stdscr)

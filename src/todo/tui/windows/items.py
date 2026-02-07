@@ -122,7 +122,7 @@ class WinItems(WinBase):
             line += 1
         self._win.refresh(0, 0, 0, 0, self.height - 1, self.width)
 
-    def _action(self, action: Action) -> None:
+    def action(self, action: Action) -> None:
         match action:
             case Action.QUIT:
                 self.keep_running = False
