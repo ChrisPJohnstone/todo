@@ -1,4 +1,4 @@
-from curses import curs_set, window, wrapper
+from curses import KEY_RESIZE, curs_set, window, wrapper
 from logging import DEBUG, Logger, getLogger
 
 from .constants import Action
@@ -58,6 +58,11 @@ class TUI:
     def handle_input(self) -> None:
         key: int = self.active_window.getch()
         self._log(DEBUG, f"Key {key} pressed")
+        if key == KEY_RESIZE:
+            for window in self.windows[::-1]:
+                window.refresh_bounds()
+                window.draw()
+                # TODO: Handle recentring divide for WinItem
         if key not in self.active_window.BINDINGS:
             return
         action: Action = self.active_window.BINDINGS[key]
