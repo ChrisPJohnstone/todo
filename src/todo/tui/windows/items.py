@@ -10,12 +10,24 @@ from ..type_definitions import Bindings
 class WinItems(WinBase):
     def __init__(
         self,
-        rows: int,
-        cols: int,
+        x_max: int,
+        y_max: int,
+        x_len_max: int,
+        y_len_max: int,
         items: list[Item],
+        x_strt: int = 0,
+        y_strt: int = 0,
         logger: Logger = getLogger(__name__),
     ) -> None:
-        super().__init__(rows, cols, logger)
+        super().__init__(
+            x_max=x_max,
+            y_max=y_max,
+            x_len_max=x_len_max,
+            y_len_max=y_len_max,
+            x_strt=x_strt,
+            y_strt=y_strt,
+            logger=logger,
+        )
         self.items = items
 
     @property
@@ -84,7 +96,7 @@ class WinItems(WinBase):
 
     @property
     def index_end(self) -> int:
-        return self.index_start + min(self.n_items, self.rows)
+        return self.index_start + min(self.n_items, self.y_len)
 
     @staticmethod
     def _message(message: str) -> str:
@@ -100,17 +112,17 @@ class WinItems(WinBase):
         if self.index_current > self.index_end - 1:
             self._log(DEBUG, "Moving page down")
             relative_position: int = self.index_current - self.index_start
-            self.index_start += relative_position - self.rows + 1
+            self.index_start += relative_position - self.y_len + 1
 
     def _draw(self) -> None:
         self._log(DEBUG, "Drawing")
         divider: str = ": "
         id_width: int = self.max_id_len
-        max_message_width: int = self.cols - id_width - len(divider)
+        max_message_width: int = self.x_len - id_width - len(divider) + 1
         line: int = 0
         for index in range(self.index_start, self.index_end):
             item: Item = self.items[index]
-            if len(item.message) >= max_message_width:
+            if len(item.message) > max_message_width:
                 message_str: str = f"{item.message[: max_message_width - 3]}..."
             else:
                 message_str: str = item.message
@@ -120,7 +132,15 @@ class WinItems(WinBase):
             else:
                 self._win.addstr(line, 0, item_str)
             line += 1
-        self._win.refresh(0, 0, 0, 0, self.rows - 1, self.cols)
+        self._win.refresh(
+            0,              # pminrow
+            0,              # pmincol
+            self.y_strt,    # sminrow
+            self.x_strt,    # smincol
+            self.y_stop - 1,    # smaxrow
+            self.x_stop,    # smaxcol
+        )
+        # TODO: Fix stops
 
     def action(self, action: Action, windows: list[WinBase]) -> None:
         match action:
@@ -135,8 +155,8 @@ class WinItems(WinBase):
             case Action.GOTO_END:
                 self.index_current = self.index_max
             case Action.JUMP_DOWN:
-                new: int = self.index_current + (self.rows // 2)
+                new: int = self.index_current + (self.y_len_max // 2)
                 self.index_current = min(new, self.index_max)
             case Action.JUMP_UP:
-                new: int = self.index_current - (self.rows // 2)
+                new: int = self.index_current - (self.y_len_max // 2)
                 self.index_current = max(new, 0)

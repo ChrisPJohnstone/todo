@@ -49,22 +49,22 @@ class TUI:
         self._items: list[Item] = value
 
     @property
-    def max_width(self) -> int:
-        return self._max_width
+    def cols(self) -> int:
+        return self._cols
 
-    @max_width.setter
-    def max_width(self, value: int) -> None:
+    @cols.setter
+    def cols(self, value: int) -> None:
         self._log(DEBUG, f"Setting max width to {value}")
-        self._max_width: int = value
+        self._cols: int = value
 
     @property
-    def max_height(self) -> int:
-        return self._max_height
+    def rows(self) -> int:
+        return self._rows
 
-    @max_height.setter
-    def max_height(self, value: int) -> None:
+    @rows.setter
+    def rows(self, value: int) -> None:
         self._log(DEBUG, f"Setting max height to {value}")
-        self._max_height: int = value
+        self._rows: int = value
 
     @property
     def windows(self) -> list[WinBase]:
@@ -86,15 +86,15 @@ class TUI:
     def _log(self, level: int, message: str) -> None:
         self._logger.log(level, self._message(message))
 
-    def refresh_max_width(self) -> None:
-        self.max_width = terminal_width() - 1
+    def refresh_cols(self) -> None:
+        self.cols = terminal_width() - 1
 
-    def refresh_max_height(self) -> None:
-        self.max_height = terminal_height()
+    def refresh_rows(self) -> None:
+        self.rows = terminal_height()
 
     def refresh_bounds(self) -> None:
-        self.refresh_max_width()
-        self.refresh_max_height()
+        self.refresh_cols()
+        self.refresh_rows()
 
     def refresh_items(self) -> None:
         self._log(DEBUG, "Refreshing items")
@@ -118,8 +118,10 @@ class TUI:
         """
         curs_set(0)
         win_items: WinItems = WinItems(
-            cols=self.max_width,
-            rows=self.max_height,
+            x_max=self.cols,
+            y_max=self.rows,
+            x_len_max=self.cols,
+            y_len_max=self.rows,
             items=self.items,
             logger=self._logger,
         )

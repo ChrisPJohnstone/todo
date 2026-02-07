@@ -10,16 +10,24 @@ from ..type_definitions import Bindings
 class WinBase(ABC):
     def __init__(
         self,
-        rows: int,
-        cols: int,
+        x_max: int,
+        y_max: int,
+        x_len_max: int,
+        y_len_max: int,
+        x_strt: int = 0,
+        y_strt: int = 0,
         logger: Logger = getLogger(__name__),
     ) -> None:
         self._logger = logger
         self._win = newpad(1000, 1000)
         # TODO: Give options to children
         # TODO: Fix hardcoded
-        self.rows = rows
-        self.cols = cols
+        self.x_max = x_max
+        self.y_max = y_max
+        self.x_len_max = x_len_max
+        self.y_len_max = y_len_max
+        self.x_strt = x_strt
+        self.y_strt = y_strt
 
     @property
     @abstractmethod
@@ -44,22 +52,74 @@ class WinBase(ABC):
         self.__win: window = value
 
     @property
-    def rows(self) -> int:
-        return self._rows
+    def x_max(self) -> int:
+        return self._x_max
 
-    @rows.setter
-    def rows(self, value: int) -> None:
-        self._log(DEBUG, f"Setting rows to {value}")
-        self._rows: int = value
+    @x_max.setter
+    def x_max(self, value: int) -> None:
+        self._log(DEBUG, f"Setting x_max to {value}")
+        self._x_max: int = value
 
     @property
-    def cols(self) -> int:
-        return self._cols
+    def y_max(self) -> int:
+        return self._y_max
 
-    @cols.setter
-    def cols(self, value: int) -> None:
-        self._log(DEBUG, f"Setting cols to {value}")
-        self._cols: int = value
+    @y_max.setter
+    def y_max(self, value: int) -> None:
+        self._log(DEBUG, f"Setting y_max to {value}")
+        self._y_max: int = value
+
+    @property
+    def x_len_max(self) -> int:
+        return self._x_len_max
+
+    @x_len_max.setter
+    def x_len_max(self, value: int) -> None:
+        self._log(DEBUG, f"Setting x_len_max to {value}")
+        self._x_len_max: int = value
+
+    @property
+    def y_len_max(self) -> int:
+        return self._y_len_max
+
+    @y_len_max.setter
+    def y_len_max(self, value: int) -> None:
+        self._log(DEBUG, f"Setting y_len_max to {value}")
+        self._y_len_max: int = value
+
+    @property
+    def x_strt(self) -> int:
+        return self._x_strt
+
+    @x_strt.setter
+    def x_strt(self, value: int) -> None:
+        self._log(DEBUG, f"Setting x_strt to {value}")
+        self._x_strt: int = value
+
+    @property
+    def x_stop(self) -> int:
+        return min(self.x_max, self.x_strt + self.x_len_max)
+
+    @property
+    def x_len(self) -> int:
+        return self.x_stop - self.x_strt
+
+    @property
+    def y_strt(self) -> int:
+        return self._y_strt
+
+    @y_strt.setter
+    def y_strt(self, value: int) -> None:
+        self._log(DEBUG, f"Setting y_strt to {value}")
+        self._y_strt: int = value
+
+    @property
+    def y_stop(self) -> int:
+        return min(self.y_max, self.y_strt + self.y_len_max)
+
+    @property
+    def y_len(self) -> int:
+        return self.y_stop - self.y_strt
 
     @staticmethod
     @abstractmethod
