@@ -1,4 +1,4 @@
-from curses import A_REVERSE
+from curses import A_REVERSE, newwin
 from logging import DEBUG, Logger, getLogger
 
 from ..constants import Action, Key
@@ -106,6 +106,9 @@ class WinItems(WinBase):
     def _message(message: str) -> str:
         return f"Items Window: {message}"
 
+    def init_win(self) -> None:
+        self._win = newwin(self.y_len, self.x_len)
+
     def refresh_page_start(self) -> None:
         self._log(DEBUG, "Redrawing bounds")
         if not hasattr(self, "_index_start"):
@@ -136,14 +139,7 @@ class WinItems(WinBase):
             else:
                 self._win.addstr(line, 0, item_str)
             line += 1
-        self._win.refresh(
-            0,  # pminrow
-            0,  # pmincol
-            self.y_strt,  # sminrow
-            self.x_strt,  # smincol
-            self.y_stop - 1,  # smaxrow
-            self.x_stop,  # smaxcol
-        )
+        self._win.refresh()
 
     def action(self, action: Action, windows: list[WinBase]) -> None:
         match action:

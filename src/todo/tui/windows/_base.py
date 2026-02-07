@@ -1,6 +1,6 @@
 from __future__ import annotations  # TODO: Remove at 3.14+
 from abc import ABC, abstractmethod
-from curses import newpad, window
+from curses import window
 from logging import DEBUG, Logger, getLogger
 
 from ..constants import Action
@@ -25,8 +25,7 @@ class WinBase(ABC):
         self.y_len_max = y_len_max
         self.x_strt = x_strt
         self.y_strt = y_strt
-        self._win = newpad(self.y_len, self.x_len)
-        # TODO: Give options to children
+        self.init_win()
 
     @property
     @abstractmethod
@@ -127,6 +126,10 @@ class WinBase(ABC):
 
     def _log(self, level: int, message: str) -> None:
         self._logger.log(level, self._message(message))
+
+    @abstractmethod
+    def init_win(self) -> None:
+        pass
 
     @abstractmethod
     def _draw(self) -> None:

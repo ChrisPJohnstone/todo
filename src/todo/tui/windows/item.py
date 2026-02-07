@@ -50,17 +50,18 @@ class WinItem(WinBase):
     def _message(message: str) -> str:
         return f"Item Window: {message}"
 
+    def init_win(self) -> None:
+        self._win = newwin(
+            self.y_len,  # nlines
+            self.x_len,  # ncols
+            self.y_strt,  # begin_y
+            self.x_strt,  # begin_x
+        )
+
     def _draw(self) -> None:
         self._log(DEBUG, "Drawing")
         self._win.vline(self.y_strt, self.x_strt)
-        self._win.refresh(
-            0,  # pminrow
-            0,  # pmincol
-            self.y_strt,  # sminrow
-            self.x_strt,  # smincol
-            self.y_stop - 1,  # smaxrow
-            self.x_stop,  # smaxcol
-        )
+        self._win.refresh()
         message_win: window = newwin(
             self.y_len,  # nlines
             self.x_len - 1,  # ncols
