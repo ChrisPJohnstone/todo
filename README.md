@@ -18,7 +18,7 @@ CLI app to manage todo list written in Python standard library.
 - `td query` enables freely querying the todo table. Example `td query TRUNCATE TABLE todo;`
 - `td show [id]` shows a specific todo item
 - `td update [id]` updates a todo item. Change due date example `td updaet 3 --due monday`
-- `td tui` Opens your items in a Terminal User Interface (TUI). [More Info](#Terminal-User-Interface-(TUI))
+- `td tui` Opens your items in a Terminal User Interface (TUI). [More Info](#terminal-user-interface-tui)
 
 ### Terminal User Interface (TUI)
 
