@@ -4,7 +4,6 @@ from logging import DEBUG, Logger, getLogger
 from .constants import Action
 from .windows import WinBase, WinItems
 from todo.database import DatabaseClient
-from todo.utils import terminal_height, terminal_width
 
 
 class TUI:
@@ -16,7 +15,6 @@ class TUI:
         self._logger = logger
         # TODO: Handle Resize
         self.database_client: DatabaseClient = database_client
-        self.refresh_bounds()
         wrapper(self.main)
 
     @property
@@ -38,24 +36,6 @@ class TUI:
         self._database_client: DatabaseClient = value
 
     @property
-    def cols(self) -> int:
-        return self._cols
-
-    @cols.setter
-    def cols(self, value: int) -> None:
-        self._log(DEBUG, f"Setting max width to {value}")
-        self._cols: int = value
-
-    @property
-    def rows(self) -> int:
-        return self._rows
-
-    @rows.setter
-    def rows(self, value: int) -> None:
-        self._log(DEBUG, f"Setting max height to {value}")
-        self._rows: int = value
-
-    @property
     def windows(self) -> list[WinBase]:
         return self._windows
 
@@ -75,16 +55,6 @@ class TUI:
     def _log(self, level: int, message: str) -> None:
         self._logger.log(level, self._message(message))
 
-    def refresh_cols(self) -> None:
-        self.cols = terminal_width() - 1
-
-    def refresh_rows(self) -> None:
-        self.rows = terminal_height()
-
-    def refresh_bounds(self) -> None:
-        self.refresh_cols()
-        self.refresh_rows()
-
     def handle_input(self) -> None:
         key: int = self.active_window.getch()
         self._log(DEBUG, f"Key {key} pressed")
@@ -103,10 +73,6 @@ class TUI:
         curs_set(0)
         win_items: WinItems = WinItems(
             database_client=self.database_client,
-            x_max=self.cols,
-            y_max=self.rows,
-            x_len_max=self.cols,
-            y_len_max=self.rows,
             logger=self._logger,
         )
         self.windows = [win_items]

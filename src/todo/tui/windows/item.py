@@ -13,21 +13,17 @@ class WinItem(WinBase):
     def __init__(
         self,
         database_client: DatabaseClient,
-        x_max: int,
-        y_max: int,
-        x_len_max: int,
-        y_len_max: int,
         item: Item,
         x_strt: int = 0,
         y_strt: int = 0,
+        x_len_max: int = 0,
+        y_len_max: int = 0,
         logger: Logger = getLogger(__name__),
     ) -> None:
         super().__init__(
             database_client=database_client,
             x_strt=x_strt,
             y_strt=y_strt,
-            x_max=x_max,
-            y_max=y_max,
             x_len_max=x_len_max,
             y_len_max=y_len_max,
             logger=logger,

@@ -6,28 +6,26 @@ from logging import DEBUG, Logger, getLogger
 from ..constants import Action
 from ..type_definitions import Bindings
 from todo.database import DatabaseClient
+from todo.utils import terminal_height, terminal_width
 
 
 class WinBase(ABC):
     def __init__(
         self,
         database_client: DatabaseClient,
-        x_max: int,
-        y_max: int,
-        x_len_max: int,
-        y_len_max: int,
         x_strt: int = 0,
         y_strt: int = 0,
+        x_len_max: int = 0,
+        y_len_max: int = 0,
         logger: Logger = getLogger(__name__),
     ) -> None:
         self._logger = logger
         self.database_client: DatabaseClient = database_client
-        self.x_max = x_max
-        self.y_max = y_max
-        self.x_len_max = x_len_max
-        self.y_len_max = y_len_max
+        self.refresh_bounds()
         self.x_strt = x_strt
         self.y_strt = y_strt
+        self.x_len_max = x_len_max
+        self.y_len_max = y_len_max
         self.init_win()
 
     @property
@@ -81,24 +79,6 @@ class WinBase(ABC):
         self._y_max: int = value
 
     @property
-    def x_len_max(self) -> int:
-        return self._x_len_max
-
-    @x_len_max.setter
-    def x_len_max(self, value: int) -> None:
-        self._log(DEBUG, f"Setting x_len_max to {value}")
-        self._x_len_max: int = value
-
-    @property
-    def y_len_max(self) -> int:
-        return self._y_len_max
-
-    @y_len_max.setter
-    def y_len_max(self, value: int) -> None:
-        self._log(DEBUG, f"Setting y_len_max to {value}")
-        self._y_len_max: int = value
-
-    @property
     def x_strt(self) -> int:
         return self._x_strt
 
@@ -106,6 +86,17 @@ class WinBase(ABC):
     def x_strt(self, value: int) -> None:
         self._log(DEBUG, f"Setting x_strt to {value}")
         self._x_strt: int = value
+
+    @property
+    def x_len_max(self) -> int:
+        return self._x_len_max
+
+    @x_len_max.setter
+    def x_len_max(self, value: int) -> None:
+        self._log(DEBUG, f"Setting x_len_max to {value}")
+        if value == 0:
+            value = self.x_max
+        self._x_len_max: int = value
 
     @property
     def x_stop(self) -> int:
@@ -125,6 +116,17 @@ class WinBase(ABC):
         self._y_strt: int = value
 
     @property
+    def y_len_max(self) -> int:
+        return self._y_len_max
+
+    @y_len_max.setter
+    def y_len_max(self, value: int) -> None:
+        self._log(DEBUG, f"Setting y_len_max to {value}")
+        if value == 0:
+            value = self.y_max
+        self._y_len_max: int = value
+
+    @property
     def y_stop(self) -> int:
         return min(self.y_max, self.y_strt + self.y_len_max)
 
@@ -139,6 +141,16 @@ class WinBase(ABC):
 
     def _log(self, level: int, message: str) -> None:
         self._logger.log(level, self._message(message))
+
+    def refresh_cols(self) -> None:
+        self.x_max = terminal_width() - 1
+
+    def refresh_rows(self) -> None:
+        self.y_max = terminal_height()
+
+    def refresh_bounds(self) -> None:
+        self.refresh_cols()
+        self.refresh_rows()
 
     @abstractmethod
     def init_win(self) -> None:
