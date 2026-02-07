@@ -14,4 +14,6 @@ BINDING: Final[dict[int, Action]] = {
     Key.L_K: Action.UP,
     Key.L_Q: Action.QUIT,
     Key.U_G: Action.GOTO_END,
+    Key.L_D: Action.JUMP_DOWN,
+    Key.L_U: Action.JUMP_UP,
 }

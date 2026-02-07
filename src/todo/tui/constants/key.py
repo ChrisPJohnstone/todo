@@ -8,6 +8,7 @@ from curses import (
     KEY_RIGHT,
     KEY_UP,
 )
+from curses.ascii import ctrl
 from enum import IntEnum, unique
 
 
@@ -17,6 +18,32 @@ class Key(IntEnum):
     ARROW_LEFT = KEY_LEFT
     ARROW_RIGHT = KEY_RIGHT
     ARROW_UP = KEY_UP
+    CTRL_A = ord(ctrl("A"))
+    CTRL_B = ord(ctrl("B"))
+    CTRL_C = ord(ctrl("C"))
+    CTRL_D = ord(ctrl("D"))
+    CTRL_E = ord(ctrl("E"))
+    CTRL_F = ord(ctrl("F"))
+    CTRL_G = ord(ctrl("G"))
+    CTRL_H = ord(ctrl("H"))
+    CTRL_I = ord(ctrl("I"))
+    CTRL_J = ord(ctrl("J"))
+    CTRL_K = ord(ctrl("K"))
+    CTRL_L = ord(ctrl("L"))
+    CTRL_M = ord(ctrl("M"))
+    CTRL_N = ord(ctrl("N"))
+    CTRL_O = ord(ctrl("O"))
+    CTRL_P = ord(ctrl("P"))
+    CTRL_Q = ord(ctrl("Q"))
+    CTRL_R = ord(ctrl("R"))
+    CTRL_S = ord(ctrl("S"))
+    CTRL_T = ord(ctrl("T"))
+    CTRL_U = ord(ctrl("U"))
+    CTRL_V = ord(ctrl("V"))
+    CTRL_W = ord(ctrl("W"))
+    CTRL_X = ord(ctrl("X"))
+    CTRL_Y = ord(ctrl("Y"))
+    CTRL_Z = ord(ctrl("Z"))
     END = KEY_END
     HOME = KEY_HOME
     L_A = ord("a")

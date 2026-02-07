@@ -157,6 +157,14 @@ class TUI:
                 self.index_current = 0
             case Action.GOTO_END:
                 self.index_current = self.max_index
+            case Action.JUMP_DOWN:
+                max_height: int = self.max_height()
+                new: int = self.index_current + (max_height // 2)
+                self.index_current = min(new, self.max_index)
+            case Action.JUMP_UP:
+                max_height: int = self.max_height()
+                new: int = self.index_current - (max_height // 2)
+                self.index_current = max(new, 0)
 
     def main(self, stdscr: window) -> None:
         """
