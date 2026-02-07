@@ -2,7 +2,6 @@ from curses import curs_set, window, wrapper
 from logging import DEBUG, Logger, getLogger
 
 from .constants import Action
-from .item import Item
 from .windows import WinBase, WinItems
 from todo.database import DatabaseClient
 from todo.utils import terminal_height, terminal_width
@@ -17,7 +16,6 @@ class TUI:
         self._logger = logger
         # TODO: Handle Resize
         self.database_client: DatabaseClient = database_client
-        self.refresh_items()
         self.refresh_bounds()
         wrapper(self.main)
 
@@ -38,15 +36,6 @@ class TUI:
     def database_client(self, value: DatabaseClient) -> None:
         self._log(DEBUG, "Setting database client")
         self._database_client: DatabaseClient = value
-
-    @property
-    def items(self) -> list[Item]:
-        return self._items
-
-    @items.setter
-    def items(self, value: list[Item]) -> None:
-        self._log(DEBUG, f"Setting items to {value}")
-        self._items: list[Item] = value
 
     @property
     def cols(self) -> int:
@@ -96,12 +85,6 @@ class TUI:
         self.refresh_cols()
         self.refresh_rows()
 
-    def refresh_items(self) -> None:
-        self._log(DEBUG, "Refreshing items")
-        self.items: list[Item] = []
-        for item in self.database_client.get_list()[1:]:
-            self.items.append(Item(*item))
-
     def handle_input(self) -> None:
         key: int = self.active_window.getch()
         self._log(DEBUG, f"Key {key} pressed")
@@ -124,7 +107,6 @@ class TUI:
             y_max=self.rows,
             x_len_max=self.cols,
             y_len_max=self.rows,
-            items=self.items,
             logger=self._logger,
         )
         self.windows = [win_items]

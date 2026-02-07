@@ -17,7 +17,6 @@ class WinItems(WinBase):
         y_max: int,
         x_len_max: int,
         y_len_max: int,
-        items: list[Item],
         x_strt: int = 0,
         y_strt: int = 0,
         logger: Logger = getLogger(__name__),
@@ -32,7 +31,7 @@ class WinItems(WinBase):
             y_len_max=y_len_max,
             logger=logger,
         )
-        self.items = items
+        self.refresh_items()
 
     @property
     def BINDINGS(self) -> Bindings:
@@ -116,6 +115,12 @@ class WinItems(WinBase):
             self.y_strt,  # begin_y
             self.x_strt,  # begin_x
         )
+
+    def refresh_items(self) -> None:
+        self._log(DEBUG, "Refreshing items")
+        self.items = [
+            Item(*item) for item in self.database_client.get_list()[1:]
+        ]
 
     def refresh_page_start(self) -> None:
         self._log(DEBUG, "Redrawing bounds")
