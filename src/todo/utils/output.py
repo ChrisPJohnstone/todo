@@ -1,3 +1,5 @@
+from textwrap import wrap
+
 from .miscellaneous import pad_string
 from .terminal import terminal_width
 from todo.constants import Alignment
@@ -221,35 +223,6 @@ class TableFormatter:
         cells: list[str] = ["-" * width for width in self.column_widths]
         return self.column_seperator.join(cells)
 
-    def wrap_string(self, value: str, width: int) -> list[str]:
-        """
-        Wrap a string to fit within a specified width.
-
-        Args:
-            value (str): The string to wrap.
-            width (int): The maximum width of each line.
-
-        Returns:
-            list[str]: A list of wrapped lines.
-        """
-        if len(value) <= width:
-            return [value]
-        lines: list[str] = []
-        current_line: str = ""
-        for word in value.split(" "):
-            len_current_line: int = len(current_line)
-            if len_current_line + len(word) + 1 <= width:
-                if len_current_line > 0:
-                    current_line += " "
-                current_line += word
-            else:
-                if len_current_line > 0:
-                    lines.append(current_line)
-                current_line = word
-        if len(current_line) > 0:
-            lines.append(current_line)
-        return lines
-
     def generate_row_string(self, row: Row, alignment: Alignment) -> str:
         """
         Generate the string representation of a row.
@@ -273,7 +246,7 @@ class TableFormatter:
                 )
                 wrapped_cells.append([cell_padded])
                 continue
-            wrapped_cell: list[str] = self.wrap_string(cell_str, cell_max_width)
+            wrapped_cell: list[str] = wrap(cell_str, cell_max_width)
             n_lines: int = len(wrapped_cell)
             if n_lines > max_lines:
                 max_lines = n_lines
