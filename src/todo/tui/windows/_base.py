@@ -2,7 +2,8 @@ from abc import ABC, abstractmethod
 from curses import newpad, window
 from logging import DEBUG, Logger, getLogger
 
-from ..constants import Action, BINDING
+from ..constants import Action
+from ..type_definitions import Bindings
 
 
 class WinBase(ABC):
@@ -19,6 +20,11 @@ class WinBase(ABC):
         self.width = width
         self.height = height
         self.keep_running = True
+
+    @property
+    @abstractmethod
+    def BINDINGS(self) -> Bindings:
+        pass
 
     @property
     def _logger(self) -> Logger:
@@ -86,7 +92,6 @@ class WinBase(ABC):
 
     def handle_input(self) -> None:
         key: int = self._win.getch()
-        if key not in BINDING:
+        if key not in self.BINDINGS:
             return
-        self._action(BINDING[key])
-        # TODO: Handle bindings per window
+        self._action(self.BINDINGS[key])

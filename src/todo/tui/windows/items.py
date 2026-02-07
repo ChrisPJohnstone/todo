@@ -2,8 +2,9 @@ from curses import A_REVERSE
 from logging import DEBUG, Logger, getLogger
 
 from ._base import WinBase
-from ..constants import Action
+from ..constants import Action, Key
 from ..item import Item
+from ..type_definitions import Bindings
 
 
 class WinItems(WinBase):
@@ -16,6 +17,22 @@ class WinItems(WinBase):
     ) -> None:
         super().__init__(width, height, logger)
         self.items = items
+
+    @property
+    def BINDINGS(self) -> Bindings:
+        return {
+            Key.ARROW_DOWN: Action.DOWN,
+            Key.ARROW_UP: Action.UP,
+            Key.END: Action.GOTO_END,
+            Key.HOME: Action.GOTO_TOP,
+            Key.L_G: Action.GOTO_TOP,
+            Key.L_J: Action.DOWN,
+            Key.L_K: Action.UP,
+            Key.L_Q: Action.QUIT,
+            Key.U_G: Action.GOTO_END,
+            Key.L_D: Action.JUMP_DOWN,
+            Key.L_U: Action.JUMP_UP,
+        }
 
     @property
     def items(self) -> list[Item]:
