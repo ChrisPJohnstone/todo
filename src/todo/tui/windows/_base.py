@@ -19,15 +19,14 @@ class WinBase(ABC):
         logger: Logger = getLogger(__name__),
     ) -> None:
         self._logger = logger
-        self._win = newpad(1000, 1000)
-        # TODO: Give options to children
-        # TODO: Fix hardcoded
         self.x_max = x_max
         self.y_max = y_max
         self.x_len_max = x_len_max
         self.y_len_max = y_len_max
         self.x_strt = x_strt
         self.y_strt = y_strt
+        self._win = newpad(self.y_len, self.x_len)
+        # TODO: Give options to children
 
     @property
     @abstractmethod

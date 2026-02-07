@@ -1,3 +1,4 @@
+from curses import newpad, window
 from logging import DEBUG, Logger, getLogger
 
 from ..constants import Action, Key
@@ -52,12 +53,21 @@ class WinItem(WinBase):
     def _draw(self) -> None:
         self._log(DEBUG, "Drawing")
         self._win.vline(self.y_strt, self.x_strt)
-        self._win.addstr(0, 1, self.item.message)
         self._win.refresh(
             0,  # pminrow
             0,  # pmincol
             self.y_strt,  # sminrow
             self.x_strt,  # smincol
+            self.y_stop - 1,  # smaxrow
+            self.x_stop,  # smaxcol
+        )
+        message_win: window = newpad(self.y_len, self.x_len - 1)
+        message_win.addstr(0, 0, self.item.message)
+        message_win.refresh(
+            0,  # pminrow
+            0,  # pmincol
+            self.y_strt,  # sminrow
+            self.x_strt + 1,  # smincol
             self.y_stop - 1,  # smaxrow
             self.x_stop,  # smaxcol
         )
