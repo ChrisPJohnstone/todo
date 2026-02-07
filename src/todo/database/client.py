@@ -9,7 +9,7 @@ class DatabaseClient:
     DATE_PATTERN: Final[str] = r"%Y-%m-%d %H:%M:%S"
 
     def __init__(self, logger: Logger = getLogger(__name__)) -> None:
-        self._logger: Logger = logger
+        self._logger = logger
         self.create_table()
 
     @property

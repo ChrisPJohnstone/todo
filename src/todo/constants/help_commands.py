@@ -9,5 +9,6 @@ HELP_COMMANDS: dict[Commands, str] = {
     Commands.LIST: "List all items",
     Commands.QUERY: "Query table directly with SQL",
     Commands.SHOW: "Show details of an item",
+    Commands.TUI: "Launch TUI",
     Commands.UPDATE: "Update an existing item",
 }

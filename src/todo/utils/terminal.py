@@ -1,6 +1,11 @@
 from shutil import get_terminal_size
 
 
+def terminal_height() -> int:
+    """Get the height of the terminal."""
+    return get_terminal_size().lines
+
+
 def terminal_width() -> int:
     """Get the width of the terminal."""
     return get_terminal_size().columns

@@ -2,7 +2,7 @@ from .date import DateUtil
 from .miscellaneous import operating_system, pad_string
 from .output import TableFormatter
 from .query import QueryUtil
-from .terminal import terminal_width
+from .terminal import terminal_height, terminal_width
 
 
 __all__: list[str] = [
@@ -11,5 +11,6 @@ __all__: list[str] = [
     "TableFormatter",
     "operating_system",
     "pad_string",
+    "terminal_height",
     "terminal_width",
 ]
