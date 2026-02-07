@@ -2,7 +2,7 @@ from curses import curs_set, window, wrapper
 from logging import DEBUG, Logger, getLogger
 
 from .item import Item
-from .windows import WinItems
+from .windows import WinBase, WinItems
 from todo.database import DatabaseClient
 from todo.utils import terminal_height, terminal_width
 
@@ -65,6 +65,15 @@ class TUI:
         self._log(DEBUG, f"Setting max height to {value}")
         self._max_height: int = value
 
+    @property
+    def active_window(self) -> WinBase:
+        return self._active_window
+
+    @active_window.setter
+    def active_window(self, value: WinBase) -> None:
+        self._log(DEBUG, "Setting active window")
+        self._active_window: WinBase = value
+
     @staticmethod
     def _message(message: str) -> str:
         return f"TUI: {message}"
@@ -102,8 +111,9 @@ class TUI:
             items=self.items,
             logger=self._logger,
         )
+        self.active_window = win_items
         stdscr.refresh()
-        while win_items.keep_running:
+        while self.active_window.keep_running:
             stdscr.clear()
-            win_items.draw()
-            win_items.handle_input()
+            self.active_window.draw()
+            self.active_window.handle_input()
