@@ -110,27 +110,19 @@ class WinItem(WinBase):
 
     def _draw(self) -> None:
         self._log(DEBUG, "Drawing")
-        self._win.border()
-        self._win.refresh()
-        item_win: window = newwin(
-            self.y_len - 2,  # nlines
-            self.x_len - 2,  # ncols
-            self.y_strt + 1,  # begin_y
-            self.x_strt + 1,  # begin_x
-        )
         for index, title in enumerate(self.fields):
             if index == self.index_current:
                 title_attr: int = A_REVERSE
             else:
                 title_attr: int = A_NORMAL
             self._message_box(
-                win=item_win,
+                win=self._win,
                 title=title,
                 message=self.fields[title],
                 y_strt=index * 3,
                 title_attr=title_attr,
             )
-        item_win.refresh()
+        self._win.refresh()
 
     def action(self, action: Action, windows: list[WinBase]) -> None:
         match action:
