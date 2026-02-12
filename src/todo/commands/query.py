@@ -14,4 +14,4 @@ def main(args: Namespace) -> None:
     database: DatabaseClient = DatabaseClient(logger=args.logger)
     results: list[tuple] = database.execute(query)
     if len(results) >= 0:
-        print(TableFormatter(results[1:], headers=results[0]))
+        print(TableFormatter(results[1:], headers=results[0]))  # type: ignore

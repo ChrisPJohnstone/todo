@@ -13,6 +13,6 @@ if not __package__:
     package_source_path: str = os.path.dirname(os.path.dirname(__file__))
     sys.path.insert(0, package_source_path)
 
-    from cli import main
+    from cli import main  # type: ignore[unresolved-import]
 
     main()

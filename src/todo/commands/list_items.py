@@ -19,4 +19,4 @@ def main(args: Namespace) -> None:
     if len(results) <= 1:
         print("No items found")
         return
-    print(TableFormatter(results[1:], headers=results[0]))
+    print(TableFormatter(results[1:], headers=results[0]))  # type: ignore
