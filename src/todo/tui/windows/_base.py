@@ -142,6 +142,10 @@ class WinBase(ABC):
     def _log(self, level: int, message: str) -> None:
         self._logger.log(level, self._message(message))
 
+    def update_item(self, item_id: int, fields: dict[str, str]) -> None:
+        self._log(DEBUG, f"Updating item with id {item_id}")
+        self.database_client.update(item_id, fields)
+
     def refresh_cols(self) -> None:
         self.x_max = terminal_width() - 1
 
