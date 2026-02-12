@@ -26,7 +26,4 @@ namespaces = true
 line-length = 80
 
 [tool.pytest.ini_options]
-addopts = '-n auto --ruff --ruff-format'
-
-[tool.zuban]
-mypy_path = ["src"]
+addopts = '-n auto --ruff --ruff-format --ty'
