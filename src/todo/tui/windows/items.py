@@ -171,7 +171,7 @@ class WinItems(WinBase):
             case Action.ENTER:
                 win_item: WinItem = WinItem(
                     database_client=self.database_client,
-                    x_strt=self.x_len_max // 2,
+                    x_strt=self.x_strt,
                     y_strt=self.y_strt,
                     x_len_max=self.x_len_max,
                     y_len_max=self.y_len_max,
