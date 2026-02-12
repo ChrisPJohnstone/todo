@@ -48,6 +48,7 @@ CLI app to manage todo list written in Python standard library.
 ## Development
 
 - You can run without install by calling dir e.g. `python src/todo/`
+- Merging to `main` branch can only be done by PRs with passing tests.
 
 ## TMUX Integration
 
