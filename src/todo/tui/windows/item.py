@@ -1,10 +1,12 @@
 from curses import A_NORMAL, A_REVERSE, newwin, window
+from curses.textpad import Textbox
 from logging import DEBUG, Logger, getLogger
+from textwrap import wrap
 
 from ..constants import Action, Key
 from ..item import Item
 from ..type_definitions import Bindings
-from ..utils import message_box
+from ..utils import message_box, textbox_validator
 from ._base import WinBase
 from todo.database import DatabaseClient
 
@@ -29,13 +31,17 @@ class WinItem(WinBase):
             logger=logger,
         )
         self.item = item
+        self.index_current = 0
 
     @property
     def BINDINGS(self) -> Bindings:
         return {
-            Key.L_Q: Action.QUIT,
+            Key.CTRL_J: Action.ENTER,
+            Key.CTRL_M: Action.ENTER,
+            Key.ENTER: Action.ENTER,
             Key.L_J: Action.DOWN,
             Key.L_K: Action.UP,
+            Key.L_Q: Action.QUIT,
         }
 
     @property
@@ -46,7 +52,6 @@ class WinItem(WinBase):
     def item(self, value: Item) -> None:
         self._log(DEBUG, f"Setting item to {value}")
         self._items: Item = value
-        self.index_current = 0
 
     @property
     def fields(self) -> dict[str, str]:
@@ -76,6 +81,10 @@ class WinItem(WinBase):
             value = value % self.n_fields
         self._index_current: int = value
 
+    @property
+    def current_field(self) -> str:
+        return list(self.fields.keys())[self.index_current]
+
     @staticmethod
     def _message(message: str) -> str:
         return f"Item Window: {message}"
@@ -87,6 +96,14 @@ class WinItem(WinBase):
             self.y_strt,  # begin_y
             self.x_strt,  # begin_x
         )
+
+    def refresh_item(self) -> None:
+        self._log(DEBUG, f"Reloading item with id {self.item.id}")
+        criteria: str = f"WHERE id = {self.item.id}"
+        item_data: list[tuple] = self.database_client.get_list(criteria)
+        if len(item_data) != 2:
+            raise ValueError(f"Expected 1 item, got {len(item_data) - 1}")
+        self.item = Item(*item_data[1])
 
     def _message_box(
         self,
@@ -124,11 +141,34 @@ class WinItem(WinBase):
             )
         self._win.refresh()
 
+    def _edit_field(self) -> None:
+        self._log(DEBUG, f"Editing field {self.current_field}")
+        value: str = self.fields[self.current_field]
+        text_win: window = newwin(
+            len(wrap(value, self.x_len - 3)),
+            self.x_len - 4,
+            self.y_strt + self.index_current * 3 + 1,
+            self.x_strt + 1,
+        )
+        text_win.addstr(0, 0, value)
+        text_win.refresh()
+        text_box: Textbox = Textbox(text_win)
+        text_box.edit(textbox_validator)
+        new_value: str = text_box.gather().strip()
+        self._log(DEBUG, f"New value for {self.current_field} is {new_value}")
+        db_field: str = self.current_field.lower().replace(" ", "_")
+        self.update_item(self.item.id, {db_field: new_value})
+        self.refresh_item()
+
     def action(self, action: Action, windows: list[WinBase]) -> None:
         match action:
             case Action.QUIT:
                 windows.pop(0)
+                windows[0].refresh_items()  # type: ignore
+                # TODO: Make more generic by adding a refresh method to WinBase and calling that instead
             case Action.DOWN:
                 self.index_current += 1
             case Action.UP:
                 self.index_current -= 1
+            case Action.ENTER:
+                self._edit_field()

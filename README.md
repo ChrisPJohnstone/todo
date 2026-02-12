@@ -40,10 +40,10 @@ CLI app to manage todo list written in Python standard library.
 #### Item
 
 - `q` Go back to list view
+- `enter` Edit item
 - Navigation
     - `up` / `k` Move up
     - `down` / `j` Move down
-- TODO: Add ability to edit item
 
 ## Development
 
