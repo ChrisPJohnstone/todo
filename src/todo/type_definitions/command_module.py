@@ -1,4 +1,4 @@
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 from typing import Protocol
 
 
@@ -7,4 +7,4 @@ class CommandModule(Protocol):
     def command_parsers() -> list[ArgumentParser]: ...
 
     @staticmethod
-    def main() -> None: ...
+    def main(args: Namespace) -> None: ...

@@ -172,3 +172,5 @@ class WinItem(WinBase):
                 self.index_current -= 1
             case Action.ENTER:
                 self._edit_field()
+            case _:
+                raise NotImplementedError(f"Unknown action {action}")
