@@ -1,7 +1,7 @@
 [project]
-name = "todo"
+name = "todo-cli-stdlib"
 version = "0.5"
-description = "CLI todo list manager"
+description = "CLI & TUI todo list manager"
 readme = "README.md"
 requires-python = ">=3.13.0"
 license = "MIT"
