@@ -179,3 +179,5 @@ class WinItems(WinBase):
                     logger=self._logger,
                 )
                 windows.insert(0, win_item)
+            case _:
+                raise NotImplementedError(f"Unknown action {action}")

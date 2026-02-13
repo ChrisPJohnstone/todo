@@ -80,7 +80,7 @@ class Daemon:
     def kill_pid(self, pid: int | None = None) -> None:
         _pid: int = pid if isinstance(pid, int) else self.pid_from_pidfile()
         try:
-            while 1:
+            while True:
                 os.kill(_pid, SIGTERM)
                 sleep(0.1)
         except OSError as error:
@@ -156,7 +156,8 @@ class Daemon:
         while True:
             sleep(1)
             self.scheduler.run(blocking=False)
-            if (update_check := self.database_last_update()) < last_updated:
+            update_check: datetime = self.database_last_update()
+            if update_check < last_updated:
                 continue
             last_updated = update_check
             self.scheduler.clear()
