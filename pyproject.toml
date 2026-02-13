@@ -1,6 +1,6 @@
 [project]
 name = "todo-cli-stdlib"
-version = "0.5"
+version = "0.6"
 description = "CLI & TUI todo list manager"
 readme = "README.md"
 requires-python = ">=3.13.0"
